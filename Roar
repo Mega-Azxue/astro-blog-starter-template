@@ -1,0 +1,2838 @@
+-- ts file was generated at discord.gg/25ms
+
+local u2 = cloneref or function(p1)
+    return p1
+end
+
+KMouse = u2(Game:GetService('Players').LocalPlayer:GetMouse())
+LclPlayer = u2(game:GetService('Players').LocalPlayer)
+CoreGui = u2(game:GetService('CoreGui'))
+Players = u2(game:GetService('Players'))
+HttpService = u2(game:GetService('HttpService'))
+
+local v3 = {
+    {
+        Name = 'LocalPlayer',
+        Icon = 'rbxassetid://17314505102',
+    },
+}
+
+function chatMessage(p4)
+    local v5 = tostring(p4)
+
+    if TextChatService.ChatVersion ~= Enum.ChatVersion.TextChatService then
+        ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(v5, 'All')
+    else
+        TextChatService.TextChannels.RBXGeneral:SendAsync(v5)
+    end
+end
+function defaultnotify(p6, p7)
+    Notify({
+        'rbxassetid://14549990176',
+        Color3.fromRGB(0, 0, 0),
+    }, p6, p7)
+end
+function splitString(p8, p9)
+    local v10 = p9 == nil and ',' or p9
+    local v11, v12, v13 = string.gmatch(p8, '[^' .. v10 .. ']+')
+    local v14 = {}
+
+    while true do
+        v13 = v11(v12, v13)
+
+        if v13 == nil then
+            break
+        end
+
+        table.insert(v14, v13)
+    end
+
+    return v14
+end
+function toTokens(p15)
+    local v16, v17, v18 = string.gmatch(p15, '([+-])([^+-]+)')
+    local v19 = {}
+
+    while true do
+        local v20
+
+        v18, v20 = v16(v17, v18)
+
+        if v18 == nil then
+            break
+        end
+
+        table.insert(v19, {
+            Operator = v18,
+            Name = v20,
+        })
+    end
+
+    return v19
+end
+
+local function u23(p21)
+    local v22 = workspace.CurrentCamera:WorldToScreenPoint(p21.Position)
+
+    return Vector2.new(v22.X, v22.Y)
+end
+
+local u24 = Players.LocalPlayer:GetMouse()
+
+local function u25()
+    return Vector2.new(u24.X, u24.Y)
+end
+local function u37()
+    local _huge = math.huge
+    local v27, v28, v29 = pairs(Players:GetPlayers())
+    local v30 = nil
+
+    while true do
+        local v31
+
+        v29, v31 = v27(v28, v29)
+
+        if v29 == nil then
+            break
+        end
+        if v31 ~= Players.LocalPlayer and v31.Character and v31.Character:FindFirstChildOfClass('Humanoid') then
+            local v32, v33, v34 = pairs(v31.Character:GetChildren())
+
+            while true do
+                local v35
+
+                v34, v35 = v32(v33, v34)
+
+                if v34 == nil then
+                    break
+                end
+                if string.find(v35.Name, 'Torso') then
+                    local _Magnitude = (u23(v35) - u25()).Magnitude
+
+                    if _Magnitude < _huge then
+                        v30 = v31
+                        _huge = _Magnitude
+                    end
+                end
+            end
+        end
+    end
+
+    return v30
+end
+
+local u165 = {
+    all = function(_)
+        return Players:GetPlayers()
+    end,
+    others = function(p38)
+        local v39, v40, v41 = pairs(Players:GetPlayers())
+        local v42 = {}
+
+        while true do
+            local v43
+
+            v41, v43 = v39(v40, v41)
+
+            if v41 == nil then
+                break
+            end
+            if v43 ~= p38 then
+                table.insert(v42, v43)
+            end
+        end
+
+        return v42
+    end,
+    me = function(p44)
+        return {p44}
+    end,
+    ['#(%d+)'] = function(_, p45, p46)
+        local v47 = tonumber(p45[1])
+        local v48 = {
+            unpack(p46),
+        }
+        local v49 = {}
+
+        for _ = 1, v47 do
+            if #v48 == 0 then
+                break
+            end
+
+            local v50 = math.random(1, #v48)
+
+            table.insert(v49, v48[v50])
+            table.remove(v48, v50)
+        end
+
+        return v49
+    end,
+    random = function(_, _, _)
+        local v51 = Players:GetPlayers()
+        local _LocalPlayer = Players.LocalPlayer
+
+        table.remove(v51, table.find(v51, _LocalPlayer))
+
+        return {
+            v51[math.random(1, #v51)],
+        }
+    end,
+    ['%%(.+)'] = function(_, p53)
+        local v54 = p53[1]
+        local v55, v56, v57 = pairs(Players:GetPlayers())
+        local v58 = {}
+
+        while true do
+            local v59
+
+            v57, v59 = v55(v56, v57)
+
+            if v57 == nil then
+                break
+            end
+            if v59.Team and string.sub(string.lower(v59.Team.Name), 1, #v54) == string.lower(v54) then
+                table.insert(v58, v59)
+            end
+        end
+
+        return v58
+    end,
+    allies = function(p60)
+        local _Team = p60.Team
+        local v62, v63, v64 = pairs(Players:GetPlayers())
+        local v65 = {}
+
+        while true do
+            local v66
+
+            v64, v66 = v62(v63, v64)
+
+            if v64 == nil then
+                break
+            end
+            if v66.Team == _Team then
+                table.insert(v65, v66)
+            end
+        end
+
+        return v65
+    end,
+    enemies = function(p67)
+        local _Team2 = p67.Team
+        local v69, v70, v71 = pairs(Players:GetPlayers())
+        local v72 = {}
+
+        while true do
+            local v73
+
+            v71, v73 = v69(v70, v71)
+
+            if v71 == nil then
+                break
+            end
+            if v73.Team ~= _Team2 then
+                table.insert(v72, v73)
+            end
+        end
+
+        return v72
+    end,
+    team = function(p74)
+        local _Team3 = p74.Team
+        local v76, v77, v78 = pairs(Players:GetPlayers())
+        local v79 = {}
+
+        while true do
+            local v80
+
+            v78, v80 = v76(v77, v78)
+
+            if v78 == nil then
+                break
+            end
+            if v80.Team == _Team3 then
+                table.insert(v79, v80)
+            end
+        end
+
+        return v79
+    end,
+    nonteam = function(p81)
+        local _Team4 = p81.Team
+        local v83, v84, v85 = pairs(Players:GetPlayers())
+        local v86 = {}
+
+        while true do
+            local v87
+
+            v85, v87 = v83(v84, v85)
+
+            if v85 == nil then
+                break
+            end
+            if v87.Team ~= _Team4 then
+                table.insert(v86, v87)
+            end
+        end
+
+        return v86
+    end,
+    friends = function(p88, _)
+        local v89, v90, v91 = pairs(Players:GetPlayers())
+        local v92 = {}
+
+        while true do
+            local v93
+
+            v91, v93 = v89(v90, v91)
+
+            if v91 == nil then
+                break
+            end
+            if v93:IsFriendsWith(p88.UserId) and v93 ~= p88 then
+                table.insert(v92, v93)
+            end
+        end
+
+        return v92
+    end,
+    nonfriends = function(p94, _)
+        local v95, v96, v97 = pairs(Players:GetPlayers())
+        local v98 = {}
+
+        while true do
+            local v99
+
+            v97, v99 = v95(v96, v97)
+
+            if v97 == nil then
+                break
+            end
+            if not v99:IsFriendsWith(p94.UserId) and v99 ~= p94 then
+                table.insert(v98, v99)
+            end
+        end
+
+        return v98
+    end,
+    guests = function(_, _)
+        local v100, v101, v102 = pairs(Players:GetPlayers())
+        local v103 = {}
+
+        while true do
+            local v104
+
+            v102, v104 = v100(v101, v102)
+
+            if v102 == nil then
+                break
+            end
+            if v104.Guest then
+                table.insert(v103, v104)
+            end
+        end
+
+        return v103
+    end,
+    bacons = function(_, _)
+        local v105, v106, v107 = pairs(Players:GetPlayers())
+        local v108 = {}
+
+        while true do
+            local v109
+
+            v107, v109 = v105(v106, v107)
+
+            if v107 == nil then
+                break
+            end
+            if v109.Character:FindFirstChild('Pal Hair') or v109.Character:FindFirstChild('Kate Hair') then
+                table.insert(v108, v109)
+            end
+        end
+
+        return v108
+    end,
+    ['age(%d+)'] = function(_, p110)
+        local v111 = {}
+        local v112 = tonumber(p110[1])
+
+        if not v112 ~= nil then
+            local v113, v114, v115 = pairs(Players:GetPlayers())
+
+            while true do
+                local v116
+
+                v115, v116 = v113(v114, v115)
+
+                if v115 == nil then
+                    break
+                end
+                if v116.AccountAge <= v112 then
+                    table.insert(v111, v116)
+                end
+            end
+
+            return v111
+        end
+    end,
+    nearest = function(p117, _, p118)
+        local _Character = p117.Character
+
+        if _Character and getRoot(_Character) then
+            local _huge2 = math.huge
+            local v121, v122, v123 = pairs(p118)
+            local v124 = nil
+
+            while true do
+                local v125
+
+                v123, v125 = v121(v122, v123)
+
+                if v123 == nil then
+                    break
+                end
+                if v125 ~= p117 and v125.Character then
+                    local v126 = v125:DistanceFromCharacter(getRoot(_Character).Position)
+
+                    if v126 < _huge2 then
+                        _huge2 = v126
+                        v124 = {v125}
+                    end
+                end
+            end
+
+            return v124
+        end
+    end,
+    farthest = function(p127, _, p128)
+        local _Character2 = p127.Character
+
+        if _Character2 and getRoot(_Character2) then
+            local v130, v131, v132 = pairs(p128)
+            local v133 = 0
+            local v134 = nil
+
+            while true do
+                local v135
+
+                v132, v135 = v130(v131, v132)
+
+                if v132 == nil then
+                    break
+                end
+                if v135 ~= p127 and v135.Character then
+                    local v136 = v135:DistanceFromCharacter(getRoot(_Character2).Position)
+
+                    if v133 < v136 then
+                        v133 = v136
+                        v134 = {v135}
+                    end
+                end
+            end
+
+            return v134
+        end
+    end,
+    ['group(%d+)'] = function(_, p137)
+        local v138 = tonumber(p137[1])
+        local v139, v140, v141 = pairs(Players:GetPlayers())
+        local v142 = {}
+
+        while true do
+            local v143
+
+            v141, v143 = v139(v140, v141)
+
+            if v141 == nil then
+                break
+            end
+            if v143:IsInGroup(v138) then
+                table.insert(v142, v143)
+            end
+        end
+
+        return v142
+    end,
+    alive = function(_, _)
+        local v144, v145, v146 = pairs(Players:GetPlayers())
+        local v147 = {}
+
+        while true do
+            local v148
+
+            v146, v148 = v144(v145, v146)
+
+            if v146 == nil then
+                break
+            end
+            if v148.Character and (v148.Character:FindFirstChildOfClass('Humanoid') and v148.Character:FindFirstChildOfClass('Humanoid').Health > 0) then
+                table.insert(v147, v148)
+            end
+        end
+
+        return v147
+    end,
+    dead = function(_, _)
+        local v149, v150, v151 = pairs(Players:GetPlayers())
+        local v152 = {}
+
+        while true do
+            local v153
+
+            v151, v153 = v149(v150, v151)
+
+            if v151 == nil then
+                break
+            end
+            if not v153.Character or (not v153.Character:FindFirstChildOfClass('Humanoid') or v153.Character:FindFirstChildOfClass('Humanoid').Health <= 0) then
+                table.insert(v152, v153)
+            end
+        end
+
+        return v152
+    end,
+    ['radius(%d+)'] = function(p154, p155)
+        local v156 = {}
+        local v157 = tonumber(p155[1])
+        local _Character3 = p154.Character
+
+        if _Character3 and getRoot(_Character3) then
+            local v159, v160, v161 = pairs(Players:GetPlayers())
+
+            while true do
+                local v162
+
+                v161, v162 = v159(v160, v161)
+
+                if v161 == nil then
+                    break
+                end
+                if v162.Character and (getRoot(v162.Character) and (getRoot(v162.Character).Position - getRoot(_Character3).Position).magnitude <= v157) then
+                    table.insert(v156, v162)
+                end
+            end
+
+            return v156
+        end
+    end,
+    cursor = function(_)
+        local v163 = {}
+        local v164 = u37()
+
+        if v164 ~= nil then
+            table.insert(v163, v164)
+        end
+
+        return v163
+    end,
+}
+
+function onlyIncludeInTable(p166, p167)
+    local v168, v169, v170 = pairs(p167)
+    local v171 = {}
+    local v172 = {}
+
+    while true do
+        local v173
+
+        v170, v173 = v168(v169, v170)
+
+        if v170 == nil then
+            break
+        end
+
+        v171[v173.Name] = true
+    end
+
+    local v174, v175, v176 = pairs(p166)
+
+    while true do
+        local v177
+
+        v176, v177 = v174(v175, v176)
+
+        if v176 == nil then
+            break
+        end
+        if v171[v177.Name] then
+            table.insert(v172, v177)
+        end
+    end
+
+    return v172
+end
+function removeTableMatches(p178, p179)
+    local v180, v181, v182 = pairs(p179)
+    local v183 = {}
+    local v184 = {}
+
+    while true do
+        local v185
+
+        v182, v185 = v180(v181, v182)
+
+        if v182 == nil then
+            break
+        end
+
+        v183[v185.Name] = true
+    end
+
+    local v186, v187, v188 = pairs(p178)
+
+    while true do
+        local v189
+
+        v188, v189 = v186(v187, v188)
+
+        if v188 == nil then
+            break
+        end
+        if not v183[v189.Name] then
+            table.insert(v184, v189)
+        end
+    end
+
+    return v184
+end
+function getPlayersByName(p190)
+    local v191 = string.lower(p190)
+    local v192 = #p190
+    local v193, v194, v195 = pairs(Players:GetPlayers())
+    local v196 = {}
+
+    while true do
+        local v197
+
+        v195, v197 = v193(v194, v195)
+
+        if v195 == nil then
+            break
+        end
+        if v191:sub(0, 1) ~= '@' then
+            if string.sub(string.lower(v197.Name), 1, v192) == v191 or string.sub(string.lower(v197.DisplayName), 1, v192) == v191 then
+                table.insert(v196, v197)
+            end
+        elseif string.sub(string.lower(v197.Name), 1, v192 - 1) == v191:sub(2) then
+            table.insert(v196, v197)
+        end
+    end
+
+    return v196
+end
+function GetPlayer(p198, _)
+    local _LocalPlayer2 = Players.LocalPlayer
+
+    if p198 == nil then
+        return {
+            _LocalPlayer2.Name,
+        }
+    end
+
+    local v200 = splitString(p198, ',')
+    local v201, v202, v203 = pairs(v200)
+    local v204 = {}
+
+    while true do
+        local v205
+
+        v203, v205 = v201(v202, v203)
+
+        if v203 == nil then
+            break
+        end
+        if string.sub(v205, 1, 1) ~= '+' and string.sub(v205, 1, 1) ~= '-' then
+            v205 = '+' .. v205
+        end
+
+        local v206 = toTokens(v205)
+        local v207 = Players:GetPlayers()
+        local v208, v209, v210 = pairs(v206)
+
+        while true do
+            local v211
+
+            v210, v211 = v208(v209, v210)
+
+            if v210 == nil then
+                break
+            end
+            if v211.Operator ~= '+' then
+                local _Name = v211.Name
+                local v213, v214, v215 = pairs(u165)
+                local v216 = false
+
+                while true do
+                    local v217
+
+                    v215, v217 = v213(v214, v215)
+
+                    if v215 == nil then
+                        break
+                    end
+
+                    local v218 = {
+                        string.match(_Name, '^' .. v215 .. '$'),
+                    }
+
+                    if #v218 > 0 then
+                        v207 = removeTableMatches(v207, v217(_LocalPlayer2, v218, v207))
+                        v216 = true
+                    end
+                end
+
+                if not v216 then
+                    v207 = removeTableMatches(v207, getPlayersByName(_Name))
+                end
+            else
+                local _Name2 = v211.Name
+                local v220, v221, v222 = pairs(u165)
+                local v223 = false
+
+                while true do
+                    local v224
+
+                    v222, v224 = v220(v221, v222)
+
+                    if v222 == nil then
+                        break
+                    end
+
+                    local v225 = {
+                        string.match(_Name2, '^' .. v222 .. '$'),
+                    }
+
+                    if #v225 > 0 then
+                        v207 = onlyIncludeInTable(v207, v224(_LocalPlayer2, v225, v207))
+                        v223 = true
+                    end
+                end
+
+                if not v223 then
+                    v207 = onlyIncludeInTable(v207, getPlayersByName(_Name2))
+                end
+            end
+        end
+
+        local v226, v227, v228 = pairs(v207)
+
+        while true do
+            local v229
+
+            v228, v229 = v226(v227, v228)
+
+            if v228 == nil then
+                break
+            end
+
+            table.insert(v204, v229)
+        end
+    end
+
+    local v230, v231, v232 = pairs(v204)
+    local v233 = {}
+
+    while true do
+        local v234
+
+        v232, v234 = v230(v231, v232)
+
+        if v232 == nil then
+            break
+        end
+
+        table.insert(v233, v234.Name)
+    end
+
+    return v233
+end
+
+local function u239()
+    local v235, v236, v237 = ipairs(game:GetService('Players'):GetPlayers())
+
+    while true do
+        local v238
+
+        v237, v238 = v235(v236, v237)
+
+        if v237 == nil then
+            break
+        end
+        if v238.Character and v238.Character:FindFirstChild('HumanoidRootPart') then
+            v238.Character.HumanoidRootPart.CFrame = LclPlayer.Character.HumanoidRootPart.CFrame + LclPlayer.Character.HumanoidRootPart.CFrame.lookVector * 1
+        end
+    end
+end
+
+spawn(function()
+    while wait() do
+        if cbringall == true then
+            u239()
+        end
+    end
+end)
+
+function isNumber(p240)
+    if tonumber(p240) ~= nil or p240 == 'inf' then
+        return true
+    end
+end
+
+RunService = u2(game:GetService('RunService'))
+soundspamming = false
+anniblockspam = false
+
+RunService.Stepped:connect(function()
+    if anniblockspam then
+        pcall(function()
+            game.workspace.Tools.Chest_Invisibility_Cloak.Part.CFrame = CFrame.new(LclPlayer.Character.HumanoidRootPart.Position)
+
+            if LclPlayer.Backpack:FindFirstChild('InvisibilityCloak') then
+                LclPlayer.Character.Humanoid:EquipTool(LclPlayer.Backpack.InvisibilityCloak)
+            end
+
+            LclPlayer.Character:FindFirstChildOfClass('Tool').Parent = workspace
+        end)
+    end
+    if soundspamming then
+        local v241, v242, v243 = pairs(game.workspace:GetDescendants())
+
+        while true do
+            local v244
+
+            v243, v244 = v241(v242, v243)
+
+            if v243 == nil then
+                break
+            end
+            if v244:IsA('Sound') then
+                v244:Play()
+            end
+        end
+    end
+end)
+
+toggleman = KCBar
+PlayerGui = Players.LocalPlayer:FindFirstChildWhichIsA('PlayerGui')
+UserInputService = u2(game:GetService('UserInputService'))
+TweenService = u2(game:GetService('TweenService'))
+MarketplaceService = u2(game:GetService('MarketplaceService'))
+TeleportService = u2(game:GetService('TeleportService'))
+StarterGui = u2(game:GetService('StarterGui'))
+GuiService = u2(game:GetService('GuiService'))
+Lighting = u2(game:GetService('Lighting'))
+ContextActionService = u2(game:GetService('ContextActionService'))
+NetworkClient = u2(game:GetService('NetworkClient'))
+ReplicatedStorage = u2(game:GetService('ReplicatedStorage'))
+GroupService = u2(game:GetService('GroupService'))
+PathService = u2(game:GetService('PathfindingService'))
+SoundService = u2(game:GetService('SoundService'))
+Teams = u2(game:GetService('Teams'))
+StarterPlayer = u2(game:GetService('StarterPlayer'))
+InsertService = u2(game:GetService('InsertService'))
+ChatService = u2(game:GetService('Chat'))
+ProximityPromptService = u2(game:GetService('ProximityPromptService'))
+StatsService = u2(game:GetService('Stats'))
+MaterialService = u2(game:GetService('MaterialService'))
+AvatarEditorService = u2(game:GetService('AvatarEditorService'))
+TextChatService = u2(game:GetService('TextChatService'))
+VirtualUser = u2(game:GetService('VirtualUser'))
+sethidden = sethiddenproperty or (set_hidden_property or set_hidden_prop)
+gethidden = gethiddenproperty or (get_hidden_property or get_hidden_prop)
+
+local v245 = not (syn and syn.queue_on_teleport) and (not queue_on_teleport and fluxus)
+
+if v245 then
+    v245 = fluxus.queue_on_teleport
+end
+
+queueteleport = v245
+httprequest = syn and syn.request or (http and http.request or http_request or (fluxus and fluxus.request or request))
+
+local _PlaceId = game.PlaceId
+
+JobId = game.JobId
+PlaceId = _PlaceId
+
+local u247 = table.find({
+    Enum.Platform.IOS,
+    Enum.Platform.Android,
+}, UserInputService:GetPlatform())
+local v248 = not (setclipboard or toclipboard) and (not set_clipboard and Clipboard)
+
+if v248 then
+    v248 = Clipboard.set
+end
+
+everyClipboard = v248
+RCDEnabled = false
+
+if gethidden(workspace, 'RejectCharacterDeletions') == Enum.RejectCharacterDeletions.Default or gethidden(workspace, 'RejectCharacterDeletions') == Enum.RejectCharacterDeletions.Enabled then
+    RCDEnabled = true
+end
+
+local _ScreenGui = Instance.new('ScreenGui')
+local _Frame = Instance.new('Frame')
+local _UIStroke = Instance.new('UIStroke')
+local _UIGradient = Instance.new('UIGradient')
+local _ImageButton = Instance.new('ImageButton')
+local _ImageButton2 = Instance.new('ImageButton')
+local _TextBox = Instance.new('TextBox')
+
+_ScreenGui.Name = 'CMDBARK'
+_ScreenGui.Parent = CoreGui
+_Frame.Name = 'CMDBARF'
+_Frame.Parent = _ScreenGui
+_Frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+_Frame.BackgroundTransparency = 1
+_Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+_Frame.BorderSizePixel = 0
+_Frame.Position = UDim2.new(0.277999997, 0, 0.0001, 0)
+_Frame.Size = UDim2.new(0.443027914, 0, 0.0690634657, 0)
+_Frame.Visible = false
+_UIStroke.Parent = _Frame
+_UIStroke.Color = Color3.fromRGB(255, 255, 255)
+_UIStroke.Thickness = 1.3
+_UIStroke.Transparency = 0.5
+_UIGradient.Parent = _UIStroke
+_UIGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(209, 0, 0)),
+    ColorSequenceKeypoint.new(0.167, Color3.fromRGB(255, 102, 34)),
+    ColorSequenceKeypoint.new(0.333, Color3.fromRGB(255, 218, 33)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(51, 221, 0)),
+    ColorSequenceKeypoint.new(0.667, Color3.fromRGB(17, 51, 204)),
+    ColorSequenceKeypoint.new(0.833, Color3.fromRGB(34, 0, 102)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(51, 0, 68)),
+})
+
+coroutine.wrap(function()
+    local v256 = _UIGradient
+
+    while true do
+        v256.Rotation = v256.Rotation + 0.32
+
+        task.wait()
+    end
+end)()
+
+_ImageButton.Name = 'CMDBARAK'
+_ImageButton.Parent = _Frame
+_ImageButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+_ImageButton.BackgroundTransparency = 1
+_ImageButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+_ImageButton.BorderSizePixel = 0
+_ImageButton.Position = UDim2.new(0.01, 0, 1.022, 0)
+_ImageButton.Size = UDim2.new(0.071, 0, -1.04, 0)
+_ImageButton.Image = 'rbxassetid://71337512335488'
+
+coroutine.wrap(function()
+    while true do
+        for v257 = 1, 360 do
+            _ImageButton.ImageColor3 = Color3.fromHSV(v257 / 360, 1, 1)
+
+            task.wait()
+        end
+    end
+end)()
+
+_ImageButton2.Name = 'CMDBAKDOR'
+_ImageButton2.Parent = _Frame
+_ImageButton2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+_ImageButton2.BackgroundTransparency = 1
+_ImageButton2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+_ImageButton2.BorderSizePixel = 0
+_ImageButton2.Position = UDim2.new(0.92, 0, 1.022, 0)
+_ImageButton2.Size = UDim2.new(0.071, 0, -1.04, 0)
+_ImageButton2.Image = 'rbxassetid://106598185888071'
+_ImageButton2.Visible = false
+_TextBox.Name = 'CMDBARKTB'
+_TextBox.Parent = _Frame
+_TextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+_TextBox.BackgroundTransparency = 1
+_TextBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+_TextBox.BorderSizePixel = 0
+_TextBox.Position = UDim2.new(0.100000091, 0, 9.0288728e-7, 0)
+_TextBox.Size = UDim2.new(0.828057408, 0, 0.999998212, 0)
+_TextBox.Font = Enum.Font.BuilderSans
+_TextBox.PlaceholderText = "Press 'K' To Open Menu"
+_TextBox.Text = ''
+_TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+_TextBox.TextSize = 27
+_TextBox.TextWrapped = true
+_TextBox.TextXAlignment = Enum.TextXAlignment.Left
+
+_TextBox.FocusLost:Connect(function()
+    _TextBox.Text = ''
+end)
+
+function createnew(p258, p259)
+    local v260 = Instance.new(p258)
+    local v261, v262, v263 = pairs(p259)
+
+    while true do
+        local v264
+
+        v263, v264 = v261(v262, v263)
+
+        if v263 == nil then
+            break
+        end
+
+        v260[v263] = v264
+    end
+
+    return v260
+end
+function createShadow(p265)
+    return createnew('Frame', {
+        Size = UDim2.new(1, 8, 1, 8),
+        Position = UDim2.new(0, -4, 0, -4),
+        Style = Enum.FrameStyle.DropShadow,
+        ZIndex = p265.ZIndex - 1,
+        Parent = p265,
+    })
+end
+function createSmallShadow(p266)
+    return createnew('Frame', {
+        Size = UDim2.new(1, 6, 1, 6),
+        Position = UDim2.new(0, -3, 0, -3),
+        Style = Enum.FrameStyle.DropShadow,
+        ZIndex = p266.ZIndex - 1,
+        Parent = p266,
+    })
+end
+function createIcon(p267, p268, p269)
+    local v270 = createnew(p269 and 'ImageButton' or 'ImageLabel', {
+        Image = p267,
+        BackgroundTransparency = 1,
+    })
+    local v271, v272, v273 = pairs(p268)
+
+    while true do
+        local v274
+
+        v273, v274 = v271(v272, v273)
+
+        if v273 == nil then
+            break
+        end
+
+        v270[v273] = v274
+    end
+
+    return v270
+end
+function Children(p275, p276)
+    coroutine.wrap(function()
+        local v277 = p275
+        local v278, v279, v280 = pairs(v277:children())
+
+        while true do
+            local u281
+
+            v280, u281 = v278(v279, v280)
+
+            if v280 == nil then
+                break
+            end
+
+            pcall(function()
+                p276(u281)
+            end)
+            pcall(function()
+                Children(u281, p276)
+            end)
+        end
+    end)()
+end
+function httpGet(p282)
+    return game:HttpGet(p282, true)
+end
+function materializebutton(p283)
+    function CreateInstance(p284, p285)
+        local v286 = Instance.new(p284)
+        local v287, v288, v289 = pairs(p285)
+
+        while true do
+            local v290
+
+            v289, v290 = v287(v288, v289)
+
+            if v289 == nil then
+                break
+            end
+
+            v286[v289] = v290
+        end
+
+        return v286
+    end
+
+    p283.AutoButtonColor = false
+
+    local _TextColor3 = p283.TextColor3
+    local _Frame2 = CreateInstance('Frame', {
+        Size = UDim2.new(1, 0, 1, 0),
+        Parent = p283,
+        Name = 'HoverFX_now_stop_stalking',
+        AnchorPoint = Vector2.new(0, 0),
+        BackgroundColor3 = _TextColor3,
+        BorderSizePixel = 0,
+        ClipsDescendants = true,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 0, 0, 0),
+        Visible = true,
+        ZIndex = p283.ZIndex + 1,
+    })
+
+    p283.InputBegan:Connect(function(p293)
+        if p293.UserInputType == Enum.UserInputType.MouseMovement then
+            TweenService:Create(_Frame2, TweenInfo.new(0.09, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), {BackgroundTransparency = 0.76}):Play()
+        end
+    end)
+    p283.InputEnded:Connect(function(p294)
+        if p294.UserInputType == Enum.UserInputType.MouseMovement then
+            TweenService:Create(_Frame2, TweenInfo.new(0.09, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), {BackgroundTransparency = 1}):Play()
+        end
+    end)
+
+    u24 = KMouse
+
+    local function v302()
+        u24 = KMouse
+
+        local v295 = math.sqrt(p283.Size.X.Offset ^ 2 + p283.Size.Y.Offset ^ 2)
+        local v296 = u24.X - p283.AbsolutePosition.X
+        local v297 = u24.Y - p283.AbsolutePosition.Y
+        local _ImageLabel = CreateInstance('ImageLabel', {
+            Name = 'CircleLabel',
+            Parent = _Frame2,
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+            BackgroundTransparency = 1,
+            BorderSizePixel = 0,
+            Position = UDim2.new(0, 0, 0, 0),
+            Size = UDim2.new(0, 50, 0, 50),
+            Visible = false,
+            Image = 'rbxasset://textures/whiteCircle.png',
+            ImageColor3 = p283.TextColor3,
+            ImageTransparency = 0.76,
+        })
+
+        _ImageLabel.Position = UDim2.new(0, v296, 0, v297)
+        _ImageLabel.Size = UDim2.new(0, 0, 0, 0)
+        _ImageLabel.ImageTransparency = 0.76
+        _ImageLabel.Visible = true
+        _ImageLabel.ZIndex = p283.ZIndex + 2
+
+        local u299 = UDim2.new(0, v295 * 2.15, 0, v295 * 2.15)
+
+        p283.InputEnded:Connect(function(p300)
+            if p300.UserInputType == Enum.UserInputType.MouseMovement then
+                while wait() do
+                    if _ImageLabel.Size == u299 then
+                        TweenService:Create(_ImageLabel, TweenInfo.new(0.3, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), {ImageTransparency = 1}):Play()
+                        wait(1.2)
+                        _ImageLabel:Destroy()
+
+                        break
+                    end
+                end
+            end
+        end)
+        p283.MouseButton1Up:Connect(function()
+            wait(0.17)
+            TweenService:Create(_ImageLabel, TweenInfo.new(0.3, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), {ImageTransparency = 1}):Play()
+            wait(1.2)
+            _ImageLabel:Destroy()
+        end)
+
+        local v301 = _ImageLabel
+
+        _ImageLabel.TweenSize(v301, u299, 'Out', 'Linear', 0.45)
+    end
+
+    p283.MouseButton1Down:Connect(v302)
+end
+function materializet(p303, p304, p305)
+    local u306 = p303
+    local v307 = p304 or u306.TextColor3
+    local u308 = p305 or u306.Text
+
+    u306.Visible = true
+    u306.Active = true
+    u306.Selectable = true
+
+    function CreateInstance(p309, p310)
+        inst = Instance.new(p309)
+
+        local v311, v312, v313 = pairs(p310)
+
+        while true do
+            local v314
+
+            v313, v314 = v311(v312, v313)
+
+            if v313 == nil then
+                break
+            end
+
+            inst[v313] = v314
+        end
+
+        return inst
+    end
+
+    local _Frame3 = CreateInstance('Frame', {
+        Name = 'Underline',
+        ZIndex = u306.ZIndex,
+        Parent = u306,
+        BackgroundColor3 = v307,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 0, 1, 0),
+        Size = UDim2.new(0, 0, 0, 2),
+    })
+    local _ = CreateInstance('Frame', {
+        Name = 'Underline',
+        ZIndex = u306.ZIndex,
+        Parent = u306,
+        BackgroundColor3 = v307,
+        BackgroundTransparency = 0.85,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 0, 1, 0),
+        Size = UDim2.new(1, 0, 0, 1),
+    }).AbsoluteSize.X
+
+    u306.Focused:connect(function()
+        if _Frame3.Size.X.Scale ~= 1 then
+            u306.PlaceholderText = ''
+
+            local v316 = u24.X - u306.AbsolutePosition.X
+
+            _Frame3.BackgroundTransparency = 0
+            _Frame3.Position = UDim2.new(0, v316, 1, 0)
+
+            wait()
+            _Frame3:TweenSizeAndPosition(UDim2.new(1, 0, 0, 2), UDim2.new(0, 0, 1, 0), 'Out', 'Quint', 0.2)
+        end
+    end)
+    u306.FocusLost:connect(function()
+        if u306.Text == '' then
+            u306.PlaceholderColor3 = u306.TextColor3
+            u306.PlaceholderText = u308
+        end
+
+        TweenService:Create(_Frame3, TweenInfo.new(0.15, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), {BackgroundTransparency = 1}):Play()
+        wait(0.15)
+
+        _Frame3.Size = UDim2.new(0, 0, 0, 2)
+    end)
+end
+
+local _BlurEffect = createnew('BlurEffect', {
+    Parent = workspace.CurrentCamera,
+    Size = 0,
+})
+local u318 = 0
+
+RunService.Stepped:Connect(function()
+    local _Size = _BlurEffect.Size
+    local _ = workspace.CurrentCamera.FieldOfView
+
+    _BlurEffect.Size = _Size + (u318 - _Size) * 0.1
+end)
+
+local _ScreenGui2 = createnew('ScreenGui', {
+    Parent = gethui() or CoreGui,
+    Name = 'KrunoxBeta',
+    OnTopOfCoreBlur = true,
+})
+
+function remove_tags(p321)
+    local _a, v323, v324 = p321:gmatch('<a.->')
+
+    while true do
+        v324 = _a(v323, v324)
+
+        if v324 == nil then
+            break
+        end
+
+        p321 = p321:gsub(v324 .. (p321:match(v324 .. '%s') and '%s' or ''), '')
+    end
+
+    local _w, v326, v327 = p321:gmatch('<%w+>')
+
+    while true do
+        v327 = _w(v326, v327)
+
+        if v327 == nil then
+            break
+        end
+
+        p321 = p321:gsub(v327 .. (p321:match(v327 .. '%s') and '%s' or ''), '')
+    end
+
+    local _w2, v329, v330 = p321:gmatch('</%w+>')
+
+    while true do
+        v330 = _w2(v329, v330)
+
+        if v330 == nil then
+            break
+        end
+
+        p321 = p321:gsub(v330 .. (p321:match(v330 .. '%s') and '%s' or ''), '')
+    end
+
+    return p321
+end
+function remove_whitespace(p331)
+    return p331:match('^%s*(.-)%s*$')
+end
+function getGuiRecursive(p332)
+    local u333 = {p332}
+
+    local function u339(p334)
+        local v335, v336, v337 = pairs(p334:GetChildren())
+
+        while true do
+            local v338
+
+            v337, v338 = v335(v336, v337)
+
+            if v337 == nil then
+                break
+            end
+            if v338:IsA('GuiObject') and not v338.Name:sub(1, 1) == '-' then
+                table.insert(u333, v338)
+            end
+
+            u339(v338)
+        end
+    end
+
+    u339(p332)
+
+    return u333
+end
+function makePsuedoBorder(p340, p341)
+    createnew('Frame', {
+        ZIndex = p340.ZIndex,
+        Size = UDim2.new(1, p341, 0, p341),
+        Position = UDim2.new(0, 0, 0, -p341),
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+        BorderSizePixel = 0,
+        Parent = p340,
+    })
+    createnew('Frame', {
+        ZIndex = p340.ZIndex,
+        Size = UDim2.new(1, p341, 0, p341),
+        Position = UDim2.new(0, -p341, 1, 0),
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+        BorderSizePixel = 0,
+        Parent = p340,
+    })
+    createnew('Frame', {
+        ZIndex = p340.ZIndex,
+        Size = UDim2.new(0, p341, 1, p341),
+        Position = UDim2.new(0, -p341, 0, -p341),
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+        BorderSizePixel = 0,
+        Parent = p340,
+    })
+    createnew('Frame', {
+        ZIndex = p340.ZIndex,
+        Size = UDim2.new(0, p341, 1, p341),
+        Position = UDim2.new(1, 0, 0, 0),
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+        BorderSizePixel = 0,
+        Parent = p340,
+    })
+end
+function getTransparencyProperty(p342)
+    return p342.ClassName:sub(1, 5) ~= 'Image' and (p342.ClassName:sub(1, 4) ~= 'Text' and 'BackgroundTransparency' or 'TextTransparency') or 'ImageTransparency'
+end
+function setRecursiveTransparency(p343, p344)
+    coroutine.wrap(function()
+        local v345, v346, v347 = pairs(getGuiRecursive(p343))
+
+        while true do
+            local v348
+
+            v347, v348 = v345(v346, v347)
+
+            if v347 == nil then
+                break
+            end
+
+            v348[getTransparencyProperty(v348)] = p344
+        end
+    end)
+end
+function tweenRecursiveTransparency(p349, p350, p351)
+    local v352, v353, v354 = pairs(getGuiRecursive(p349))
+
+    while true do
+        local u355
+
+        v354, u355 = v352(v353, v354)
+
+        if v354 == nil then
+            break
+        end
+
+        spawn(function()
+            local v356 = getTransparencyProperty(u355)
+
+            for v357 = u355[v356], p350, p351 do
+                u355[v356] = v357
+
+                RunService.Stepped:wait()
+            end
+
+            u355[v356] = p350
+        end)
+    end
+end
+
+local _Frame4 = createnew('Frame', {
+    Name = 'KrunoxController',
+    Size = UDim2.new(0, 0, 0, #v3 * 35),
+    Position = UDim2.new(0, 10, 0.5, 0),
+    AnchorPoint = Vector2.new(0, 0.5),
+    BackgroundTransparency = 1,
+    Parent = _ScreenGui2,
+})
+local v382 = {
+    new = function(p359)
+        local v360 = next
+        local v361, v362 = _ScreenGui2:GetChildren()
+
+        while true do
+            local v363
+
+            v362, v363 = v360(v361, v362)
+
+            if v362 == nil then
+                break
+            end
+            if v363.Name == p359.name then
+                return 'Function halted'
+            end
+        end
+
+        local _Frame5 = createnew('Frame', {
+            Size = UDim2.new(0, p359.width - 50, 0, p359.height - 50),
+            ZIndex = 8,
+            BorderSizePixel = 0,
+            BackgroundColor3 = Color3.fromRGB(20, 17, 24),
+            ClipsDescendants = true,
+            Name = p359.name,
+            Parent = _ScreenGui2,
+        })
+        local _position = p359.position
+
+        if not _position then
+            local v366 = _ScreenGui2
+            local v367 = _ScreenGui2
+
+            _position = UDim2.new(0.5, -(_Frame5.AbsoluteSize.X / 2) + (#v366:children() - 1) * 30, 0.5, -(_Frame5.AbsoluteSize.Y / 2) + (#v367:children() - 1) * 30)
+        end
+
+        _Frame5.Position = _position + UDim2.new(0, 25, 0, 25)
+
+        local u368 = createShadow(_Frame5)
+
+        u368.Visible = false
+
+        createnew('TextButton', {
+            Name = 'white',
+            Size = UDim2.new(10, 0, 0, 29),
+            Position = UDim2.new(0, 0, 0, 0),
+            TextXAlignment = Enum.TextXAlignment.Left,
+            BackgroundTransparency = 0,
+            BackgroundColor3 = Color3.fromRGB(32, 31, 37),
+            Font = Enum.Font.SourceSansLight,
+            FontSize = Enum.FontSize.Size24,
+            TextSize = 22,
+            Text = '',
+            TextColor3 = Color3.fromRGB(255, 255, 255),
+            ZIndex = 8,
+            BorderSizePixel = 0,
+            Parent = _Frame5,
+        })
+
+        local _TextButton = createnew('TextButton', {
+            Name = 'Drag',
+            Size = UDim2.new(1, 0, 0, 30),
+            Position = UDim2.new(0, 31, 0, 0),
+            TextXAlignment = Enum.TextXAlignment.Left,
+            BackgroundTransparency = 1,
+            BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+            Font = Enum.Font.SourceSansLight,
+            FontSize = Enum.FontSize.Size24,
+            TextSize = 22,
+            Text = p359.name,
+            TextColor3 = Color3.fromRGB(229, 224, 231),
+            ZIndex = 8,
+            Parent = _Frame5,
+        })
+
+        createnew('Frame', {
+            Name = 'Content',
+            ZIndex = 8,
+            Size = UDim2.new(1, 0, 0, p359.height - 30),
+            Position = UDim2.new(0, 0, 0, 30),
+            BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+            BackgroundTransparency = 1,
+            Transparency = 1,
+            Parent = _Frame5,
+            ClipsDescendants = true,
+        })
+        _TextButton.Changed:connect(function(p370)
+            if p370 == 'Position' then
+                _Frame5.Position = _Frame5.Position + _TextButton.Position - UDim2.new(0, 31, 0, 0)
+                _TextButton.Position = UDim2.new(0, 31, 0, 0)
+            end
+        end)
+        createIcon(p359.icon, {
+            Name = 'Icon',
+            Size = UDim2.new(0, 24, 0, 24),
+            Position = UDim2.new(0, 3, 0, 3),
+            ZIndex = 8,
+            Parent = _Frame5,
+        })
+
+        local _httpwwwrobloxcomassetid708205809 = createIcon('http://www.roblox.com/asset/?id=708205809', {
+            Name = 'Close',
+            Size = UDim2.new(0, 24, 0, 24),
+            Position = UDim2.new(1, -27, 0, 3),
+            ZIndex = 8,
+            Parent = _Frame5,
+        }, true)
+        local _httpwwwrobloxcomassetid708205677 = createIcon('http://www.roblox.com/asset/?id=708205677', {
+            Name = 'Minimize',
+            Size = UDim2.new(0, 20, 0, 20),
+            Position = UDim2.new(1, -50, 0, 5),
+            ZIndex = 8,
+            Parent = _Frame5,
+        }, true)
+        local u373 = false
+
+        _httpwwwrobloxcomassetid708205809.MouseButton1Up:connect(function()
+            _Frame5.Visible = false
+        end)
+
+        local _Frame6 = Instance.new('Frame')
+
+        _Frame6.Name = 'haha'
+        _Frame6.Parent = _ScreenGui2
+        _Frame6.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        _Frame6.BackgroundTransparency = 0
+        _Frame6.BorderColor3 = Color3.fromRGB(0, 0, 0)
+        _Frame6.BorderSizePixel = 0
+        _Frame6.AnchorPoint = Vector2.new(0, 1)
+        _Frame6.Position = UDim2.new(0, 0, 1, -10)
+        _Frame6.Size = UDim2.new(0, 36, 0, 36)
+
+        local _ImageButton3 = Instance.new('ImageButton')
+
+        _ImageButton3.Name = 'CMDBARAK'
+        _ImageButton3.Parent = _Frame6
+        _ImageButton3.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        _ImageButton3.BackgroundTransparency = 0
+        _ImageButton3.AutoButtonColor = false
+        _ImageButton3.BorderColor3 = Color3.fromRGB(0, 0, 0)
+        _ImageButton3.BorderSizePixel = 0
+        _ImageButton3.ZIndex = 11
+        _ImageButton3.AnchorPoint = Vector2.new(0.5, 0.5)
+        _ImageButton3.Position = UDim2.new(0.5, 0, 0.5, 0)
+        _ImageButton3.Size = UDim2.new(0, 30, 0, 30)
+        _ImageButton3.Image = 'rbxassetid://100143457304111'
+
+        _ImageButton3.MouseButton1Click:Connect(function()
+            _Frame5.Visible = true
+        end)
+        createnew('UICorner', {
+            CornerRadius = UDim.new(0, 10),
+            Parent = _ImageButton3,
+        })
+        createnew('UICorner', {
+            CornerRadius = UDim.new(0, 10),
+            Parent = _Frame6,
+        })
+        _httpwwwrobloxcomassetid708205677.MouseButton1Up:connect(function()
+            if u373 ~= false then
+                u373 = false
+
+                _Frame5:TweenSize(UDim2.new(0, _Frame5.AbsoluteSize.X, 0, p359.height), 'Out', 'Quart', 0.3, true)
+            else
+                _Frame5:TweenSize(UDim2.new(0, _Frame5.AbsoluteSize.X, 0, 30), 'Out', 'Quart', 0.3, true)
+
+                u373 = true
+            end
+        end)
+        setRecursiveTransparency(_Frame5, 1)
+
+        local v376 = _Frame5
+        local _TweenSizeAndPosition = _Frame5.TweenSizeAndPosition
+        local v378 = UDim2.new(0, p359.width, 0, p359.height)
+        local _position2 = p359.position
+
+        if not _position2 then
+            local v380 = _ScreenGui2
+            local v381 = _ScreenGui2
+
+            _position2 = UDim2.new(0.5, -(_Frame5.AbsoluteSize.X / 2) + (#v380:children() - 1) * 30, 0.5, -(_Frame5.AbsoluteSize.Y / 2) + (#v381:children() - 1) * 30)
+        end
+
+        _TweenSizeAndPosition(v376, v378, _position2, 'Out', 'Quart', 0.3, true)
+
+        _TextButton.Draggable = true
+
+        tweenRecursiveTransparency(_Frame5, 0, -0.15)
+        coroutine.wrap(function()
+            u368.Visible = true
+
+            wait(0.5)
+            u368:Destroy()
+        end)()
+
+        return _Frame5
+    end,
+}
+local v383, v384, v385 = pairs(v3)
+local v386 = _ScreenGui2
+local u387 = false
+local v388 = {}
+
+while true do
+    local u389, v390 = v383(v384, v385)
+
+    if u389 == nil then
+        break
+    end
+
+    v385 = u389
+
+    local _TextButton2 = createnew('TextButton', {
+        Name = v390.Name,
+        Size = UDim2.new(0, 150, 0, 30),
+        Position = UDim2.new(0, -165, 0, (u389 - 1) * 35),
+        BorderSizePixel = 0,
+        ZIndex = 8,
+        BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+        Parent = _Frame4,
+        Text = '',
+        TextColor3 = Color3.fromRGB(255, 255, 255),
+    })
+
+    _TextButton2.InputBegan:Connect(function(p392)
+        if p392.UserInputType == Enum.UserInputType.MouseMovement and u387 then
+            _TextButton2:TweenPosition(UDim2.new(0, 10, 0, (u389 - 1) * 35), 'Out', 'Quart', 0.2, true)
+        end
+    end)
+    _TextButton2.InputEnded:Connect(function(p393)
+        if p393.UserInputType == Enum.UserInputType.MouseMovement and u387 then
+            _TextButton2:TweenPosition(UDim2.new(0, 0, 0, (u389 - 1) * 35), 'Out', 'Quart', 0.2, true)
+        end
+    end)
+    _TextButton2.MouseEnter:connect(function()
+        _TextButton2:TweenPosition(UDim2.new(0, 10, 0, (u389 - 1) * 35), 'Out', 'Quart', 0.2, true)
+
+        local _HapticService = game:GetService('HapticService')
+
+        function hapticFeedbackMobile(p395, p396, p397)
+            if _HapticService:IsMotorSupported(Enum.UserInputType.Gamepad1, p395) then
+                _HapticService:SetMotor(Enum.UserInputType.Gamepad1, p395, p397)
+                wait(p396)
+                _HapticService:SetMotor(Enum.UserInputType.Gamepad1, p395, 0)
+            end
+        end
+
+        hapticFeedbackMobile(Enum.VibrationMotor.Large, 0.1, 1)
+    end)
+    _TextButton2.MouseLeave:connect(function()
+        _TextButton2:TweenPosition(UDim2.new(0, 0, 0, (u389 - 1) * 35), 'Out', 'Quart', 0.2, true)
+    end)
+    table.insert(v388, _TextButton2)
+    createIcon(v390.Icon, {
+        Size = UDim2.new(0, 24, 0, 24),
+        Position = UDim2.new(0, 3, 0, 3),
+        ZIndex = 8,
+        Parent = _TextButton2,
+    })
+    createnew('TextLabel', {
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 1, 0),
+        Position = UDim2.new(0, 31, 0, 0),
+        TextXAlignment = Enum.TextXAlignment.Left,
+        Font = Enum.Font.SourceSansLight,
+        FontSize = Enum.FontSize.Size24,
+        TextSize = 22,
+        ZIndex = 8,
+        TextColor3 = Color3.fromRGB(255, 255, 255),
+        Text = v390.Name,
+        Parent = _TextButton2,
+    })
+    materializebutton(_TextButton2)
+    createSmallShadow(_TextButton2)
+end
+
+local _Frame7 = createnew('Frame', {
+    Style = Enum.FrameStyle.Custom,
+    Active = false,
+    AnchorPoint = Vector2.new(0, 0),
+    BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+    BackgroundTransparency = 1,
+    BorderColor3 = Color3.fromRGB(0.105882, 0.164706, 0.207843),
+    BorderSizePixel = 1,
+    ClipsDescendants = false,
+    Draggable = false,
+    Position = UDim2.new(0.949999988, -420, 0, 0),
+    Rotation = 0,
+    Selectable = false,
+    Size = UDim2.new(0.0500000007, 420, 1, -20),
+    SizeConstraint = Enum.SizeConstraint.RelativeXY,
+    Visible = true,
+    ZIndex = 1,
+    Name = 'Container',
+    Parent = v386,
+})
+
+createnew('UIListLayout', {
+    Padding = UDim.new(0, 15),
+    FillDirection = Enum.FillDirection.Vertical,
+    HorizontalAlignment = Enum.HorizontalAlignment.Center,
+    SortOrder = Enum.SortOrder.LayoutOrder,
+    VerticalAlignment = Enum.VerticalAlignment.Bottom,
+    Name = 'UIListLayout',
+    Parent = _Frame7,
+})
+
+function Notify(p399, p400, p401, p402)
+    spawn(function()
+        local v403 = _Frame7
+        local u404 = false
+        local _Frame8 = createnew('Frame', {
+            Style = Enum.FrameStyle.Custom,
+            LayoutOrder = 1,
+            Active = false,
+            AnchorPoint = Vector2.new(0, 0),
+            BackgroundColor3 = Color3.fromRGB(42, 41, 47),
+            BackgroundTransparency = 1,
+            BorderColor3 = Color3.fromRGB(0.105882, 0.164706, 0.207843),
+            BorderSizePixel = 0,
+            ClipsDescendants = false,
+            Draggable = false,
+            Position = UDim2.new(0, 0, 0, 0),
+            Rotation = 0,
+            Selectable = false,
+            Size = UDim2.new(0, 390, 0, 0),
+            SizeConstraint = Enum.SizeConstraint.RelativeXY,
+            Visible = true,
+            ZIndex = 60,
+            Name = 'Noti',
+            Parent = v403,
+        })
+        local _ImageLabel2 = createnew('ImageLabel', {
+            Image = 'rbxassetid://186491278',
+            ImageColor3 = Color3.fromRGB(255, 255, 255),
+            ImageRectOffset = Vector2.new(0, 0),
+            ImageRectSize = Vector2.new(0, 0),
+            ImageTransparency = 1,
+            ScaleType = Enum.ScaleType.Slice,
+            SliceCenter = Rect.new(50, 50, 50, 50),
+            Active = false,
+            AnchorPoint = Vector2.new(0.5, 0.479999989),
+            BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+            BackgroundTransparency = 1,
+            BorderColor3 = Color3.fromRGB(0.105882, 0.164706, 0.207843),
+            BorderSizePixel = 1,
+            ClipsDescendants = false,
+            Draggable = false,
+            Position = UDim2.new(0, 195, 0, 49),
+            Rotation = 0,
+            Selectable = false,
+            Size = UDim2.new(1, 31, 1, 32),
+            SizeConstraint = Enum.SizeConstraint.RelativeXY,
+            Visible = true,
+            ZIndex = 59,
+            Name = 'Shadow',
+            Parent = _Frame8,
+        })
+        local _ImageButton4 = createnew('ImageButton', {
+            Image = 'rbxassetid://708205809',
+            ImageColor3 = Color3.fromRGB(229, 224, 232),
+            ImageRectOffset = Vector2.new(0, 0),
+            ImageRectSize = Vector2.new(0, 0),
+            ImageTransparency = 0,
+            ScaleType = Enum.ScaleType.Stretch,
+            SliceCenter = Rect.new(0, 0, 0, 0),
+            AutoButtonColor = true,
+            Modal = false,
+            Selected = false,
+            Style = Enum.ButtonStyle.Custom,
+            Active = true,
+            AnchorPoint = Vector2.new(0, 0),
+            BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+            BackgroundTransparency = 1,
+            BorderColor3 = Color3.fromRGB(0.105882, 0.164706, 0.207843),
+            BorderSizePixel = 1,
+            ClipsDescendants = false,
+            Draggable = false,
+            Position = UDim2.new(1, -30, 0, 13),
+            Rotation = 0,
+            Selectable = true,
+            Size = UDim2.new(0, 15, 0, 15),
+            SizeConstraint = Enum.SizeConstraint.RelativeXY,
+            Visible = true,
+            ZIndex = 63,
+            Name = 'Close',
+            Parent = _Frame8,
+        })
+        local _ImageLabel3 = createnew('ImageLabel', {
+            Image = p399[1],
+            ImageRectOffset = Vector2.new(0, 0),
+            ImageRectSize = Vector2.new(0, 0),
+            ImageTransparency = 1,
+            ScaleType = Enum.ScaleType.Stretch,
+            SliceCenter = Rect.new(0, 0, 0, 0),
+            Active = false,
+            AnchorPoint = Vector2.new(0, 0),
+            BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+            BackgroundTransparency = 1,
+            BorderColor3 = Color3.fromRGB(0.105882, 0.164706, 0.207843),
+            BorderSizePixel = 1,
+            ClipsDescendants = false,
+            Draggable = false,
+            Position = UDim2.new(0, 18, 0, 14),
+            Rotation = 0,
+            Selectable = false,
+            Size = UDim2.new(0, 73, 0, 73),
+            SizeConstraint = Enum.SizeConstraint.RelativeXY,
+            Visible = true,
+            ZIndex = 61,
+            Name = 'Icon',
+            Parent = _Frame8,
+        })
+        local _TextLabel = createnew('TextLabel', {
+            Font = Enum.Font.SourceSans,
+            FontSize = Enum.FontSize.Size24,
+            Text = p401,
+            TextColor3 = Color3.fromRGB(185, 179, 191),
+            TextScaled = true,
+            TextSize = 19,
+            TextStrokeColor3 = Color3.fromRGB(0, 0, 0),
+            TextStrokeTransparency = 1,
+            TextTransparency = 1,
+            TextWrapped = true,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            TextYAlignment = Enum.TextYAlignment.Top,
+            Active = false,
+            AnchorPoint = Vector2.new(0, 0),
+            BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+            BackgroundTransparency = 1,
+            BorderColor3 = Color3.fromRGB(0.105882, 0.164706, 0.207843),
+            BorderSizePixel = 1,
+            ClipsDescendants = false,
+            Draggable = false,
+            Position = UDim2.new(0, 105, 0, 45),
+            Rotation = 0,
+            Selectable = false,
+            Size = UDim2.new(0, 270, 0, 17),
+            SizeConstraint = Enum.SizeConstraint.RelativeXY,
+            Visible = true,
+            ZIndex = 62,
+            Name = 'Subtitle',
+            Parent = _Frame8,
+        })
+        local _TextLabel2 = createnew('TextLabel', {
+            Font = Enum.Font.SourceSansSemibold,
+            FontSize = Enum.FontSize.Size24,
+            Text = p400,
+            TextColor3 = Color3.fromRGB(229, 224, 232),
+            TextScaled = true,
+            TextSize = 21,
+            TextStrokeColor3 = Color3.fromRGB(0, 0, 0),
+            TextStrokeTransparency = 1,
+            TextTransparency = 1,
+            TextWrapped = true,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            TextYAlignment = Enum.TextYAlignment.Bottom,
+            Active = false,
+            AnchorPoint = Vector2.new(0, 0),
+            BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+            BackgroundTransparency = 1,
+            BorderColor3 = Color3.fromRGB(0.105882, 0.164706, 0.207843),
+            BorderSizePixel = 1,
+            ClipsDescendants = false,
+            Draggable = false,
+            Position = UDim2.new(0, 105, 0, 10),
+            Rotation = 0,
+            Selectable = false,
+            Size = UDim2.new(0, 200, 0, 27),
+            SizeConstraint = Enum.SizeConstraint.RelativeXY,
+            Visible = true,
+            ZIndex = 62,
+            Name = 'Title',
+            Parent = _Frame8,
+        })
+
+        if p399[2] ~= nil then
+            _ImageLabel3.ImageColor3 = p399[2]
+        end
+
+        local v411 = next
+        local v412, v413 = v403:GetChildren()
+
+        while true do
+            local v414
+
+            v413, v414 = v411(v412, v413)
+
+            if v413 == nil then
+                break
+            end
+            if v414:IsA('GuiObject') and not _Frame8 then
+                v414.LayoutOrder = v414.LayoutOrder + 1
+            end
+        end
+
+        if not u247 then
+            _Frame8.InputBegan:Connect(function(p415)
+                if u404 and p415.UserInputType == Enum.UserInputType.MouseMovement then
+                    TweenService:Create(_ImageButton4, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), {ImageTransparency = 0}):Play()
+                end
+            end)
+            _Frame8.InputEnded:Connect(function(p416)
+                if p416.UserInputType == Enum.UserInputType.MouseMovement then
+                    TweenService:Create(_ImageButton4, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), {ImageTransparency = 1}):Play()
+                end
+            end)
+        end
+
+        _ImageButton4.MouseButton1Click:Connect(function()
+            if u404 then
+                u404 = false
+
+                _Frame8:TweenSize(UDim2.new(0, 390, 0, 0), 'Out', 'Quart', 0.7, true)
+                TweenService:Create(_ImageButton4, TweenInfo.new(0.01, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), {ImageTransparency = 1}):Play()
+                TweenService:Create(_ImageLabel2, TweenInfo.new(0.05, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), {ImageTransparency = 1}):Play()
+                TweenService:Create(_TextLabel, TweenInfo.new(0.05, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), {TextTransparency = 1}):Play()
+                TweenService:Create(_TextLabel2, TweenInfo.new(0.05, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), {TextTransparency = 1}):Play()
+                TweenService:Create(_ImageLabel3, TweenInfo.new(0.05, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), {ImageTransparency = 1}):Play()
+            end
+        end)
+        _Frame8:GetPropertyChangedSignal('Size'):Connect(function()
+            _ImageLabel2.Position = UDim2.new(0, _Frame8.Size.X.Offset / 2, 0, _Frame8.Size.Y.Offset / 2.05)
+        end)
+
+        local _Y = u2(game:GetService('TextService')):GetTextSize(p401, 19, Enum.Font.SourceSans, Vector2.new(270, 2147483583)).Y
+        local v418 = math.max(100, _Y + 63)
+
+        _TextLabel.Size = UDim2.new(0, 270, 0, _Y)
+
+        _Frame8:TweenSize(UDim2.new(0, 390, 0, v418), 'Out', 'Quart', 0.7, true)
+        wait(0.6)
+        TweenService:Create(_Frame8, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out, 0, false, 0), {BackgroundTransparency = 0}):Play()
+        TweenService:Create(_ImageLabel2, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out, 0, false, 0), {ImageTransparency = 0}):Play()
+        TweenService:Create(_TextLabel, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out, 0, false, 0), {TextTransparency = 0}):Play()
+        TweenService:Create(_TextLabel2, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out, 0, false, 0), {TextTransparency = 0}):Play()
+        TweenService:Create(_ImageLabel3, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out, 0, false, 0), {ImageTransparency = 0}):Play()
+        wait(0.3)
+
+        local v419 = true
+
+        if p402 == nil then
+            wait(4)
+        else
+            wait(p402)
+        end
+
+        v419 = false
+
+        _Frame8:TweenSize(UDim2.new(0, 390, 0, 0), 'Out', 'Quart', 0.7, true)
+        TweenService:Create(_ImageButton4, TweenInfo.new(0.01, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), {ImageTransparency = 1}):Play()
+        TweenService:Create(_ImageLabel2, TweenInfo.new(0.05, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), {ImageTransparency = 1}):Play()
+        TweenService:Create(_TextLabel, TweenInfo.new(0.05, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), {TextTransparency = 1}):Play()
+        TweenService:Create(_TextLabel2, TweenInfo.new(0.05, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), {TextTransparency = 1}):Play()
+        TweenService:Create(_ImageLabel3, TweenInfo.new(0.05, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), {ImageTransparency = 1}):Play()
+        wait(0.3)
+        TweenService:Create(_Frame8, TweenInfo.new(0.33, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), {BackgroundTransparency = 1}):Play()
+    end)
+end
+function toggleanim(p420, p421)
+    local u422 = UDim2.new(0, p420.Size.X.Offset / 2, 0, p420.Size.Y.Offset / 2)
+    local _ImageLabel4 = createnew('ImageLabel', {
+        Name = 'Circleanim',
+        Size = UDim2.new(0, 0, 0, 0),
+        BackgroundTransparency = 1,
+        Image = 'rbxasset://textures/whiteCircle.png',
+        ImageTransparency = 0.7,
+        Position = u422,
+        ZIndex = 8,
+        Rotation = 0,
+        Parent = p420,
+    })
+    local u424 = false
+
+    p420.MouseButton1Up:Connect(function()
+        if u424 then
+            _ImageLabel4.ImageTransparency = 0.7
+            u424 = not u424
+
+            p421(u424)
+        else
+            _ImageLabel4.ImageTransparency = 0.5
+            u424 = not u424
+
+            p421(u424)
+        end
+    end)
+    p420.InputBegan:Connect(function(p425)
+        if p425.UserInputType == Enum.UserInputType.MouseMovement then
+            _ImageLabel4:TweenSizeAndPosition(UDim2.new(1, 0, 1, 0), UDim2.new(0, 0, 0, 0), 'Out', 'Linear', 0.1, true)
+        end
+    end)
+    p420.InputEnded:Connect(function(p426)
+        if p426.UserInputType == Enum.UserInputType.MouseMovement and not u424 then
+            _ImageLabel4:TweenSizeAndPosition(UDim2.new(0, 0, 0, 0), u422, 'Out', 'inear', 0.1, true)
+        end
+    end)
+end
+function createcheckbox(p427, p428, p429, p430, p431)
+    if not p428 then
+        Color3.fromRGB(0, 0, 0)
+    end
+    if not p429 then
+        Color3.fromRGB(255, 255, 255)
+    end
+
+    local _ImageButton5 = createnew('ImageButton', {
+        Image = 'rbxassetid://1721163816',
+        ZIndex = 65,
+        ImageColor3 = Color3.fromRGB(208, 188, 255),
+        ImageRectOffset = Vector2.new(0, 0),
+        ImageRectSize = Vector2.new(0, 0),
+        ImageTransparency = 0,
+        ScaleType = Enum.ScaleType.Stretch,
+        SliceCenter = Rect.new(0, 0, 0, 0),
+        AutoButtonColor = true,
+        Modal = false,
+        Selected = false,
+        Style = Enum.ButtonStyle.Custom,
+        Active = true,
+        AnchorPoint = Vector2.new(0, 0),
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+        BackgroundTransparency = 1,
+        BorderColor3 = Color3.fromRGB(0.105882, 0.164706, 0.207843),
+        BorderSizePixel = 1,
+        ClipsDescendants = false,
+        Draggable = false,
+        Position = UDim2.new(0, -35, 0, 0),
+        Rotation = 0,
+        Selectable = true,
+        Size = UDim2.new(0, 26, 0, 26),
+        SizeConstraint = Enum.SizeConstraint.RelativeXY,
+        Visible = true,
+        Name = 'CheckBoxImage',
+        Parent = p427,
+    })
+
+    createnew('Frame', {
+        Style = Enum.FrameStyle.Custom,
+        ZIndex = 63,
+        Active = false,
+        AnchorPoint = Vector2.new(0, 0),
+        BackgroundColor3 = Color3.fromRGB(208, 188, 255),
+        BackgroundTransparency = 0,
+        BorderColor3 = Color3.fromRGB(0.105882, 0.164706, 0.207843),
+        BorderSizePixel = 0,
+        ClipsDescendants = false,
+        Draggable = false,
+        Position = UDim2.new(0.150000006, 0, 0.150000006, 0),
+        Rotation = 0,
+        Selectable = false,
+        Size = UDim2.new(0.699999988, 0, 0.699999988, 0),
+        SizeConstraint = Enum.SizeConstraint.RelativeXY,
+        Visible = true,
+        Name = 'BackgroundFrame',
+        Parent = _ImageButton5,
+    })
+
+    local _Frame9 = createnew('Frame', {
+        Style = Enum.FrameStyle.Custom,
+        ZIndex = 64,
+        Active = false,
+        AnchorPoint = Vector2.new(0, 0),
+        BackgroundColor3 = Color3.fromRGB(55, 29, 112),
+        BackgroundTransparency = 0,
+        BorderColor3 = Color3.fromRGB(0.105882, 0.164706, 0.207843),
+        BorderSizePixel = 0,
+        ClipsDescendants = false,
+        Draggable = false,
+        Position = UDim2.new(0, 4, 0, 5),
+        Rotation = 0,
+        Selectable = false,
+        Size = UDim2.new(0, 0, 0.600000024, 0),
+        SizeConstraint = Enum.SizeConstraint.RelativeXY,
+        Visible = true,
+        Name = 'CheckFrame',
+        Parent = _ImageButton5,
+    })
+    local _Frame10 = createnew('Frame', {
+        Style = Enum.FrameStyle.Custom,
+        ZIndex = 65,
+        Active = false,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        BackgroundColor3 = Color3.fromRGB(20, 17, 24),
+        BackgroundTransparency = 0,
+        BorderColor3 = Color3.fromRGB(0.105882, 0.164706, 0.207843),
+        BorderSizePixel = 0,
+        ClipsDescendants = false,
+        Draggable = false,
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        Rotation = 0,
+        Selectable = false,
+        Size = UDim2.new(0.600000024, 0, 0.600000024, 0),
+        SizeConstraint = Enum.SizeConstraint.RelativeXY,
+        Visible = true,
+        Name = 'UncheckedFrame',
+        Parent = _ImageButton5,
+    })
+    local u435
+
+    if p431 == true then
+        _Frame9.Size = UDim2.new(0.7, 0, 0.6, 0)
+        _Frame9.Position = UDim2.new(0, 4, 0, 5)
+        _Frame10.BackgroundTransparency = 1
+        u435 = true
+    else
+        u435 = false
+    end
+
+    _ImageButton5.MouseButton1Down:Connect(function()
+        if u435 then
+            _Frame9:TweenSize(UDim2.new(0, 0, 0.6, 0), 'Out', 'Quad', 0.1)
+        else
+            TweenService:Create(_Frame10, TweenInfo.new(0.1), {BackgroundTransparency = 1}):Play()
+        end
+    end)
+    _ImageButton5.MouseButton1Up:Connect(function()
+        if u435 then
+            TweenService:Create(_Frame10, TweenInfo.new(0.1), {BackgroundTransparency = 0}):Play()
+
+            u435 = false
+
+            p430(u435)
+        else
+            _Frame9:TweenSizeAndPosition(UDim2.new(0.7, 0, 0.6, 0), UDim2.new(0, 4, 0, 5), 'Out', 'Quad', 0.2)
+
+            u435 = true
+
+            p430(u435)
+        end
+    end)
+
+    if p427.ClassName == 'TextButton' or p427.ClassName == 'ImageButton' then
+        p427.AutoButtonColor = false
+
+        p427.MouseButton1Up:Connect(function()
+            if u435 then
+                TweenService:Create(_Frame10, TweenInfo.new(0.1), {BackgroundTransparency = 0}):Play()
+
+                u435 = false
+
+                p430(u435)
+            else
+                _Frame9:TweenSizeAndPosition(UDim2.new(0.7, 0, 0.6, 0), UDim2.new(0, 4, 0, 5), 'Out', 'Quad', 0.2)
+
+                u435 = true
+
+                p430(u435)
+            end
+        end)
+        p427.MouseButton1Down:Connect(function()
+            if u435 then
+                _Frame9:TweenSize(UDim2.new(0, 0, 0.6, 0), 'Out', 'Quad', 0.1)
+            else
+                TweenService:Create(_Frame10, TweenInfo.new(0.1), {BackgroundTransparency = 1}):Play()
+            end
+        end)
+        p427.InputEnded:Connect(function(p436)
+            if p436.UserInputType == Enum.UserInputType.MouseMovement then
+                if u435 and _Frame9.Size == UDim2.new(0, 0, 1, 0) then
+                    _Frame9:TweenSize(UDim2.new(1, 0, 1, 0), 'Out', 'Quad', 0.1)
+                elseif u435 == false and _Frame10.BackgroundTransparency > 0 then
+                    TweenService:Create(_Frame10, TweenInfo.new(0.1), {BackgroundTransparency = 0}):Play()
+                end
+            end
+        end)
+    end
+
+    _ImageButton5.InputEnded:Connect(function(p437)
+        if p437.UserInputType == Enum.UserInputType.MouseMovement then
+            if u435 and _Frame9.Size == UDim2.new(0, 0, 1, 0) then
+                _Frame9:TweenSize(UDim2.new(1, 0, 1, 0), 'Out', 'Quad', 0.1)
+            elseif u435 == false and _Frame10.BackgroundTransparency > 0 then
+                TweenService:Create(_Frame10, TweenInfo.new(0.1), {BackgroundTransparency = 0}):Play()
+            end
+        end
+    end)
+end
+function Ripple(p438, p439)
+    local function u442(p440, p441)
+        TweenService:Create(p440, TweenInfo.new(0.3), p441):Play()
+    end
+    local function v452()
+        local _X = p438.AbsoluteSize.X
+        local _Y2 = p438.AbsoluteSize.Y
+        local _X2 = p438.AbsolutePosition.X
+        local _Y3 = p438.AbsolutePosition.Y
+        local _X3 = KMouse.X
+        local _Y4 = KMouse.Y
+        local v449 = UDim2.new(0, _X3 - _X2, 0, _Y4 - _Y3)
+        local _BackgroundColor3 = p438.BackgroundColor3
+        local _ = _BackgroundColor3.R
+        local _ = _BackgroundColor3.G
+        local _ = _BackgroundColor3.B
+        local _Frame11 = Instance.new('Frame', p438)
+
+        _Frame11.BackgroundColor3 = p439
+        _Frame11.Name = 'Ripple'
+        _Frame11.ZIndex = 100001
+        Instance.new('UICorner', _Frame11).CornerRadius = UDim.new(1, 0)
+        _Frame11.AnchorPoint = Vector2.new(0.5, 0.5)
+        _Frame11.Position = v449
+
+        _Frame11:TweenSize(UDim2.fromOffset(math.max(_X, _Y2), math.max(_X, _Y2)), 'Out', 'Sine', 0.3)
+        u442(_Frame11, {BackgroundTransparency = 1})
+        wait(0.3)
+        _Frame11:Destroy()
+    end
+
+    p438.MouseButton1Down:Connect(v452)
+end
+
+newpos = 0
+
+function NewBtn(p453, p454, p455, p456)
+    local _TextButton3 = createnew('TextButton', {
+        ZIndex = 8,
+        Text = p454,
+        Font = Enum.Font.SourceSans,
+        TextScaled = true,
+        BackgroundColor3 = Color3.fromRGB(209, 188, 255),
+        BackgroundTransparency = 0,
+        TextColor3 = Color3.fromRGB(61, 35, 119),
+        Size = UDim2.new(0.95, 0, 0, 24),
+        Position = UDim2.new(0.025, 0, 0, tonumber(newpos)),
+        ClipsDescendants = true,
+        AutoButtonColor = false,
+        Parent = p453,
+    })
+
+    createnew('UICorner', {
+        CornerRadius = UDim.new(0, 20),
+        Parent = _TextButton3,
+    })
+    _TextButton3.MouseButton1Click:Connect(function()
+        local _, _ = pcall(function()
+            coroutine.wrap(function()
+                p456()
+            end)()
+        end)
+    end)
+
+    local v458 = createIcon(p455, {
+        Size = UDim2.new(0, 0, 1, 0),
+        ImageColor3 = Color3.fromRGB(0, 0, 0),
+        ZIndex = 8,
+        Parent = _TextButton3,
+    })
+
+    v458.Size = UDim2.new(0, v458.AbsoluteSize.Y, 0, v458.AbsoluteSize.Y)
+
+    Ripple(_TextButton3, Color3.fromRGB(50, 50, 50))
+
+    newpos = newpos + 30
+end
+
+Keep = false
+
+function newcheck(p459, p460, p461)
+    local _TextButton4 = CreateInstance('TextButton', {
+        Font = Enum.Font.SourceSansLight,
+        FontSize = Enum.FontSize.Size24,
+        Text = '',
+        TextColor3 = Color3.fromRGB(229, 224, 231),
+        TextScaled = false,
+        TextSize = 22,
+        TextStrokeColor3 = Color3.fromRGB(0, 0, 0),
+        TextStrokeTransparency = 1,
+        TextTransparency = 0,
+        TextWrapped = true,
+        TextYAlignment = Enum.TextYAlignment.Center,
+        AutoButtonColor = true,
+        Modal = false,
+        Selected = false,
+        Style = Enum.ButtonStyle.Custom,
+        Active = true,
+        AnchorPoint = Vector2.new(0, 0),
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+        BackgroundTransparency = 1,
+        BorderColor3 = Color3.fromRGB(0.105882, 0.164706, 0.207843),
+        BorderSizePixel = 0,
+        ClipsDescendants = false,
+        Draggable = false,
+        Position = UDim2.new(0.165000007, 0, 0, tonumber(newpos) - 1),
+        Rotation = 0,
+        Selectable = true,
+        Size = UDim2.new(0, 200, 0, 26),
+        SizeConstraint = Enum.SizeConstraint.RelativeXY,
+        Visible = true,
+        ZIndex = 8,
+        Name = 'Keepcmdbar',
+        Parent = p459,
+    })
+    local _TextButton5 = createnew('TextButton', {
+        ZIndex = 8,
+        Text = p460,
+        Font = Enum.Font.SourceSans,
+        TextScaled = true,
+        BackgroundColor3 = Color3.fromRGB(1, 1, 1),
+        BackgroundTransparency = 1,
+        TextColor3 = Color3.fromRGB(229, 224, 231),
+        Size = UDim2.new(0.95, 0, 0, 24),
+        Position = UDim2.new(0.025, 0, 0, tonumber(newpos)),
+        ClipsDescendants = true,
+        AutoButtonColor = false,
+        Parent = p459,
+    })
+
+    Ripple(_TextButton5, Color3.fromRGB(210, 210, 210))
+    createcheckbox(_TextButton4, Color3.fromRGB(208, 188, 255), Color3.fromRGB(54, 30, 113), function(_)
+        local _, _ = pcall(function()
+            coroutine.wrap(function()
+                p461()
+            end)()
+        end)
+    end, Keep)
+
+    newpos = newpos + 30
+end
+function inputbox(p464, p465)
+    local _TextBox2 = createnew('TextBox', {
+        ClearTextOnFocus = true,
+        Font = Enum.Font.SourceSans,
+        FontSize = Enum.FontSize.Size24,
+        MultiLine = false,
+        Text = '',
+        TextColor3 = Color3.fromRGB(229, 224, 231),
+        PlaceholderText = '',
+        PlaceholderColor3 = Color3.fromRGB(0.7, 0.7, 0.7),
+        TextScaled = true,
+        TextSize = 22,
+        TextStrokeColor3 = Color3.fromRGB(0, 0, 0),
+        TextStrokeTransparency = 1,
+        TextTransparency = 0,
+        TextWrapped = true,
+        TextXAlignment = Enum.TextXAlignment.Center,
+        TextYAlignment = Enum.TextYAlignment.Bottom,
+        Active = true,
+        AnchorPoint = Vector2.new(0, 0),
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+        BackgroundTransparency = 1,
+        BorderColor3 = Color3.fromRGB(0.105882, 0.164706, 0.207843),
+        BorderSizePixel = 1,
+        ClipsDescendants = false,
+        Draggable = false,
+        Position = UDim2.new(0.025, 0, 0, tonumber(newpos)),
+        Rotation = 0,
+        Selectable = true,
+        Size = UDim2.new(0.95, 0, 0.015, 0),
+        SizeConstraint = Enum.SizeConstraint.RelativeXY,
+        Visible = true,
+        ZIndex = 9,
+        Name = 'Searchs',
+        Parent = p464,
+    })
+    local _TextButton6 = createnew('TextButton', {
+        ZIndex = 8,
+        Text = '',
+        Font = Enum.Font.SourceSansLight,
+        TextScaled = true,
+        BackgroundColor3 = Color3.new(1, 1, 1),
+        BackgroundTransparency = 1,
+        TextColor3 = Color3.new(0, 0, 0),
+        Size = UDim2.new(0.95, 0, 0, 24),
+        Position = UDim2.new(0.025, 0, 0, tonumber(newpos)),
+        ClipsDescendants = true,
+        AutoButtonColor = false,
+        Parent = p464,
+    })
+
+    createnew('UICorner', {
+        CornerRadius = UDim.new(0, 3),
+        Parent = _TextButton6,
+    })
+
+    local _UIStroke2 = createnew('UIStroke', {
+        Color = Color3.fromRGB(108, 105, 114),
+        Thickness = 0.98,
+        ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+        Transparency = 0,
+        Parent = _TextButton6,
+    })
+    local _TextButton7 = createnew('TextButton', {
+        ZIndex = 8,
+        Text = p465,
+        Font = Enum.Font.SourceSans,
+        TextScaled = false,
+        TextSize = 18,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        BackgroundColor3 = Color3.fromRGB(20, 17, 24),
+        BackgroundTransparency = 0,
+        TextColor3 = Color3.fromRGB(229, 224, 231),
+        Size = UDim2.new(0.2, 0, 0, 3),
+        BorderSizePixel = 0,
+        Position = UDim2.new(0.05, 0, 0, tonumber(newpos) + 9),
+        ClipsDescendants = false,
+        AutoButtonColor = false,
+        Parent = p464,
+    })
+    local u470 = newpos
+
+    _TextBox2.Focused:Connect(function()
+        TweenService:Create(_UIStroke2, TweenInfo.new(0.13, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Color = Color3.fromRGB(209, 188, 255),
+        }):Play()
+        TweenService:Create(_UIStroke2, TweenInfo.new(0.13, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Thickness = 1.6}):Play()
+        TweenService:Create(_TextButton7, TweenInfo.new(0.13, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            TextColor3 = Color3.fromRGB(209, 188, 255),
+        }):Play()
+
+        _TextButton7.TextXAlignment = Enum.TextXAlignment.Center
+
+        _TextButton7:TweenSizeAndPosition(UDim2.new(0.2, 0, 0, 3), UDim2.new(0.1, 0, 0, tonumber(u470) - 2), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.1)
+    end)
+    _TextBox2.FocusLost:Connect(function(_)
+        TweenService:Create(_UIStroke2, TweenInfo.new(0.13, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Color = Color3.fromRGB(108, 105, 114),
+        }):Play()
+        TweenService:Create(_UIStroke2, TweenInfo.new(0.13, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Thickness = 0.97}):Play()
+        TweenService:Create(_TextButton7, TweenInfo.new(0.13, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            TextColor3 = Color3.fromRGB(229, 224, 231),
+        }):Play()
+
+        if _TextBox2.Text == '' then
+            _TextButton7.TextXAlignment = Enum.TextXAlignment.Left
+
+            _TextButton7:TweenSizeAndPosition(UDim2.new(0.2, 0, 0, 3), UDim2.new(0.05, 0, 0, tonumber(u470) + 9), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.1)
+        end
+    end)
+
+    newpos = newpos + 30
+
+    return _TextBox2
+end
+function TextLine(p471, p472)
+    local _TextButton8 = createnew('TextButton', {
+        ZIndex = 8,
+        Text = p472,
+        Font = Enum.Font.SourceSansLight,
+        TextScaled = true,
+        BackgroundColor3 = Color3.new(1, 1, 1),
+        BackgroundTransparency = 1,
+        TextColor3 = Color3.new(1, 1, 1),
+        Size = UDim2.new(0.95, 0, 0, 24),
+        Position = UDim2.new(0.025, 0, 0, tonumber(newpos)),
+        ClipsDescendants = true,
+        AutoButtonColor = false,
+        Parent = p471,
+    })
+
+    newpos = newpos + 30
+
+    return _TextButton8
+end
+
+local v474 = v382.new({
+    width = 500,
+    height = 340,
+    name = 'Free Private Server GUI',
+    icon = 'rbxassetid://100143457304111',
+})
+local _ScrollingFrame = createnew('ScrollingFrame', {
+    BottomImage = 'rbxasset://textures/ui/Scroll/scroll-middle.png',
+    ScrollBarImageTransparency = 0.7,
+    CanvasPosition = Vector2.new(6, 0),
+    CanvasSize = UDim2.new(0, 0, 5, 0),
+    MidImage = 'rbxasset://textures/ui/Scroll/scroll-middle.png',
+    ScrollBarThickness = 6,
+    ScrollingEnabled = true,
+    TopImage = 'rbxasset://textures/ui/Scroll/scroll-middle.png',
+    Active = false,
+    AnchorPoint = Vector2.new(0, 0),
+    BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+    BackgroundTransparency = 1,
+    BorderColor3 = Color3.fromRGB(0.105882, 0.164706, 0.207843),
+    BorderSizePixel = 0,
+    ClipsDescendants = true,
+    Draggable = false,
+    Position = UDim2.new(0.016, 0, 0, 5),
+    Rotation = 0,
+    Selectable = true,
+    Size = UDim2.new(1, 0, 0, 600),
+    SizeConstraint = Enum.SizeConstraint.RelativeXY,
+    Visible = true,
+    ZIndex = 8,
+    Name = 'Tools',
+    ScrollingDirection = Enum.ScrollingDirection.Y,
+    Parent = v474.Content,
+})
+local u476 = TextLine(_ScrollingFrame, 'Server Code: Invalid')
+local u477 = nil
+
+NewBtn(_ScrollingFrame, 'Generate Private Server', 'rbxassetid://0', function()
+    t = {
+        3614090360,
+        3905402710,
+        606105819,
+        3250441966,
+        4118548399,
+        1200080426,
+        2821735955,
+        4249261313,
+        1770035416,
+        2336552879,
+        4294925233,
+        2304563134,
+        1804603682,
+        4254626195,
+        2792965006,
+        1236535329,
+        4129170786,
+        3225465664,
+        643717713,
+        3921069994,
+        3593408605,
+        38016083,
+        3634488961,
+        3889429448,
+        568446438,
+        3275163606,
+        4107603335,
+        1163531501,
+        2850285829,
+        4243563512,
+        1735328473,
+        2368359562,
+        4294588738,
+        2272392833,
+        1839030562,
+        4259657740,
+        2763975236,
+        1272893353,
+        4139469664,
+        3200236656,
+        681279174,
+        3936430074,
+        3572445317,
+        76029189,
+        3654602809,
+        3873151461,
+        530742520,
+        3299628645,
+        4096336452,
+        1126891415,
+        2878612391,
+        4237533241,
+        1700485571,
+        2399980690,
+        4293915773,
+        2240044497,
+        1873313359,
+        4264355552,
+        2734768916,
+        1309151649,
+        4149444226,
+        3174756917,
+        718787259,
+        3951481745,
+    }
+
+    function h(p478)
+        d = 271733878
+        c = 2562383102
+        b = 4023233417
+        a = 1732584193
+        p = p478 .. '\u{fffd}'
+
+        while#p % 64 ~= 56 do
+            p = p .. '\0'
+        end
+
+        l = #p478 * 8
+
+        for v479 = 0, 7 do
+            p = p .. string.char(bit32.band(bit32.rshift(l, v479 * 8), 255))
+        end
+        for v480 = 1, #p, 64 do
+            ch = p:sub(v480, v480 + 63)
+            x = {}
+
+            for v481 = 0, 15 do
+                local v482, v483, v484, v485 = ch:byte(v481 * 4 + 1, v481 * 4 + 4)
+
+                b4 = v485
+                b3 = v484
+                b2 = v483
+                b1 = v482
+                x[v481] = bit32.bor(b1, bit32.lshift(b2, 8), bit32.lshift(b3, 16), bit32.lshift(b4, 24))
+            end
+
+            local v486 = a
+            local v487 = b
+            local v488 = c
+
+            dd = d
+            cc = v488
+            bb = v487
+            aa = v486
+            s = {
+                7,
+                12,
+                17,
+                22,
+                5,
+                9,
+                14,
+                20,
+                4,
+                11,
+                16,
+                23,
+                6,
+                10,
+                15,
+                21,
+            }
+
+            for v489 = 0, 63 do
+                if v489 < 16 then
+                    f = bit32.bor(bit32.band(b, c), bit32.band(bit32.bnot(b), d))
+                    k = v489
+                    si = v489 % 4
+                elseif v489 < 32 then
+                    f = bit32.bor(bit32.band(b, d), bit32.band(c, bit32.bnot(d)))
+                    k = (1 + 5 * v489) % 16
+                    si = 4 + v489 % 4
+                elseif v489 < 48 then
+                    f = bit32.bxor(b, bit32.bxor(c, d))
+                    k = (5 + 3 * v489) % 16
+                    si = 8 + v489 % 4
+                else
+                    f = bit32.bxor(c, bit32.bor(b, bit32.bnot(d)))
+                    k = 7 * v489 % 16
+                    si = 12 + v489 % 4
+                end
+
+                tmp = bit32.band(a + f + x[k] + t[v489 + 1], 4294967295)
+                tmp = bit32.bor(bit32.lshift(tmp, s[si + 1]), bit32.rshift(tmp, 32 - s[si + 1]))
+                nb = bit32.band(b + tmp, 4294967295)
+
+                local v490 = d
+                local v491 = nb
+                local v492 = b
+
+                d = c
+                c = v492
+                b = v491
+                a = v490
+            end
+
+            a = bit32.band(a + aa, 4294967295)
+            b = bit32.band(b + bb, 4294967295)
+            c = bit32.band(c + cc, 4294967295)
+            d = bit32.band(d + dd, 4294967295)
+        end
+
+        r = ''
+
+        local v493, v494, v495 = pairs({
+            a,
+            b,
+            c,
+            d,
+        })
+
+        while true do
+            local v496
+
+            v495, v496 = v493(v494, v495)
+
+            if v495 == nil then
+                break
+            end
+
+            for v497 = 0, 3 do
+                r = r .. string.char(bit32.band(bit32.rshift(v496, v497 * 8), 255))
+            end
+        end
+
+        return r
+    end
+    function hm(p498, p499, p500)
+        if #p498 > 64 then
+            p498 = p500(p498)
+        end
+
+        ikp = ''
+        okp = ''
+
+        for v501 = 1, 64 do
+            by = v501 > #p498 and 0 or (string.byte(p498, v501) or 0)
+            okp = okp .. string.char(bit32.bxor(by, 92))
+            ikp = ikp .. string.char(bit32.bxor(by, 54))
+        end
+
+        return p500(okp .. p500(ikp .. p499))
+    end
+    function b64(p502)
+        b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+
+        return (p502:gsub('.', function(p503)
+            bv = p503:byte()
+            r = ''
+
+            for v504 = 8, 1, -1 do
+                r = r .. (bv % 2 ^ v504 - bv % 2 ^ (v504 - 1) > 0 and '1' or '0')
+            end
+
+            return r
+        end) .. '0000'):gsub('%d%d%d?%d?%d?%d?', function(p505)
+            if #p505 < 6 then
+                return ''
+            end
+
+            c = 0
+
+            for v506 = 1, 6 do
+                c = c + (p505:sub(v506, v506) == '1' and 2 ^ (6 - v506) or 0)
+            end
+
+            return b:sub(c + 1, c + 1)
+        end) .. ({
+            '',
+            '==',
+            '=',
+        })[#p502 % 3 + 1]
+    end
+    function gc(p507)
+        u = {}
+
+        for v508 = 1, 16 do
+            u[v508] = math.random(0, 255)
+        end
+
+        u[7] = bit32.bor(bit32.band(u[7], 15), 64)
+        u[9] = bit32.bor(bit32.band(u[9], 63), 128)
+        fb = ''
+
+        for v509 = 1, 16 do
+            fb = fb .. string.char(u[v509])
+        end
+
+        gcode = string.format('%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x', table.unpack(u))
+        pib = ''
+        pr = p507
+
+        for _ = 1, 8 do
+            pib = pib .. string.char(pr % 256)
+            pr = math.floor(pr / 256)
+        end
+
+        ct = fb .. pib
+        sig = hm('e4Yn8ckbCJtw2sv7qmbg', ct, h)
+        acb = sig .. ct
+        ac = b64(acb):gsub('+', '-'):gsub('/', '_')
+        pd = 0
+        ac = ac:gsub('=', function()
+            pd = pd + 1
+
+            return ''
+        end)
+        ac = ac .. tostring(pd)
+
+        return ac, gcode
+    end
+
+    local v510, v511 = gc(game.PlaceId)
+
+    gcode = v511
+    ac = v510
+    u477 = ac
+    u476.Text = 'Server Code: ' .. ac
+end)
+NewBtn(_ScrollingFrame, 'Join Private Server', 'rbxassetid://0', function()
+    if u477 ~= nil then
+        Notify({
+            'rbxassetid://100143457304111',
+            Color3.fromRGB(255, 255, 255),
+        }, 'Teleporting..', 'Please Wait for a While', 10)
+        game:GetService('RobloxReplicatedStorage').ContactListIrisInviteTeleport:FireServer(game.PlaceId, '', u477)
+    else
+        Notify({
+            'rbxassetid://100143457304111',
+            Color3.fromRGB(255, 255, 255),
+        }, 'Invalid Code', 'Generate a Server Code First', 5)
+    end
+end)
+NewBtn(_ScrollingFrame, 'Copy Server Code', 'rbxassetid://0', function()
+    if u477 ~= nil then
+        setclipboard(u477)
+    else
+        Notify({
+            'rbxassetid://100143457304111',
+            Color3.fromRGB(255, 255, 255),
+        }, 'Invalid Code', 'Generate a Server Code First', 5)
+    end
+end)
+
+local u512 = inputbox(_ScrollingFrame, 'Place Id')
+local u513 = inputbox(_ScrollingFrame, 'Server Code')
+
+NewBtn(_ScrollingFrame, 'Join Server', 'rbxassetid://0', function()
+    if u512.Text == '' or u513.Text == '' then
+        Notify({
+            'rbxassetid://100143457304111',
+            Color3.fromRGB(255, 255, 255),
+        }, 'Invalid Arguments', "Are you Sure You've Entered the Code and the PlaceId?", 10)
+    else
+        Notify({
+            'rbxassetid://100143457304111',
+            Color3.fromRGB(255, 255, 255),
+        }, 'Teleporting..', 'Please Wait for a While', 10)
+
+        local _Text = u513.Text
+        local v515 = tonumber(u512.Text)
+
+        game.RobloxReplicatedStorage.ContactListIrisInviteTeleport:FireServer(v515, '', _Text)
+    end
+end)
+NewBtn(_ScrollingFrame, 'Use Current Place Id', 'rbxassetid://0', function()
+    u512.Text = game.PlaceId
+end)
+TextLine(_ScrollingFrame, '\u{fffd}\u{fffd} Discord \u{2014}')
+NewBtn(_ScrollingFrame, 'Copy Discord', 'rbxassetid://0', function()
+    setclipboard('https://discord.gg/xGucmFjGVD')
+end)
+Notify({
+    'rbxassetid://105257344115504',
+    Color3.fromRGB(255, 255, 255),
+}, 'Support Me', 'Support me by subscribing to my channel, Stay tuned for more OP Scripts!\nhttps://www.youtube.com/@Tesker103 (Copied to clipboard)', 5)
+setclipboard('https://www.youtube.com/@Tesker103')
