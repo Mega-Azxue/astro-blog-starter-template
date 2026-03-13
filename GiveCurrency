@@ -1,0 +1,585 @@
+local v_u_1 = {}
+local v_u_2 = game:GetService("Players")
+local v3 = game:GetService("ReplicatedStorage")
+local v_u_4 = game:GetService("TweenService")
+local v_u_5 = v_u_2.LocalPlayer
+local v6 = v_u_5:WaitForChild("PlayerGui")
+local v7 = v_u_5:WaitForChild("PlayerScripts")
+local v_u_8 = v6.Screen
+local v_u_9 = v6.BillboardGuis
+local v_u_10 = v_u_5.stats
+local v_u_11 = v_u_5.leaderstats
+local v_u_12 = v_u_5.OtherValues
+local v_u_13 = v3.Remotes
+local _ = v3.Animations
+local v_u_14 = require(v7.EffectsModule)
+local v_u_15 = require(v7.GeneralModule)
+local v_u_16 = require(v7.Code)
+local v17 = v3:WaitForChild("Interface").Frames
+local v_u_18 = require(v17.NotificationContainer)
+local v_u_19 = Color3.fromRGB(255, 0, 0)
+local v_u_20 = Color3.fromRGB(0, 0, 0)
+local v_u_21 = Color3.fromRGB(0, 255, 0)
+local v_u_22 = v_u_9.GiveCurrencyGuis.GiveCurrency
+local v_u_23 = v_u_8.Frames.SendCash.Frame
+local v_u_24 = v_u_23.Close
+local v_u_25 = v_u_23.TextBox
+local v_u_26 = v_u_23.Give
+local v_u_27 = v_u_23.Title
+local v_u_28 = v_u_8.Frames.SendCoin.Frame
+local v_u_29 = v_u_28.Close
+local v_u_30 = v_u_28.TextBox
+local v_u_31 = v_u_28.Give
+local v_u_32 = v_u_28.Title
+local v_u_33 = false
+local function v_u_53(p_u_34)
+	-- upvalues: (copy) v_u_25, (copy) v_u_27, (copy) v_u_14, (copy) v_u_23, (copy) v_u_28, (copy) v_u_18, (copy) v_u_19, (copy) v_u_20, (copy) v_u_13, (copy) v_u_11, (copy) v_u_10, (copy) v_u_16, (copy) v_u_15, (copy) v_u_21, (copy) v_u_24, (copy) v_u_26, (ref) v_u_33
+	v_u_25.Text = "Type Here"
+	v_u_27.Text = "Send Cash to " .. p_u_34.Name
+	v_u_14.OpenFrame(v_u_23.Parent, false, 0, true, false, false)
+	v_u_14.CloseFrame(v_u_28.Parent, false, 0, false, true)
+	local function v_u_47()
+		-- upvalues: (ref) v_u_25, (ref) v_u_18, (ref) v_u_19, (ref) v_u_20, (ref) v_u_13, (ref) v_u_11, (ref) v_u_10, (copy) p_u_34, (ref) v_u_16, (ref) v_u_15, (ref) v_u_21, (ref) v_u_14, (ref) v_u_23
+		local v35 = v_u_25.Text
+		local v36 = tonumber(v35)
+		if v35 == "" then
+			local v37 = {
+				["Text"] = "Error! Please enter an amount.",
+				["Color"] = v_u_19,
+				["Stroke"] = {
+					["Color"] = v_u_20,
+					["Thickness"] = 1
+				}
+			}
+			v_u_18.add(v37)
+			return
+		elseif v36 then
+			if v36 <= 0 then
+				local v38 = {
+					["Text"] = "Amount should be above 0!",
+					["Color"] = v_u_19,
+					["Stroke"] = {
+						["Color"] = v_u_20,
+						["Thickness"] = 1
+					}
+				}
+				v_u_18.add(v38)
+				return
+			elseif v36 > 50000 then
+				local v39 = {
+					["Text"] = "Amount should be below 50000!",
+					["Color"] = v_u_19,
+					["Stroke"] = {
+						["Color"] = v_u_20,
+						["Thickness"] = 1
+					}
+				}
+				v_u_18.add(v39)
+				return
+			else
+				v_u_25.Text = ""
+				if v_u_13.CheckCash:InvokeServer(v36) then
+					if v_u_11.Cash.Value - v_u_10.OnHoldCash.Value < v36 then
+						local v40 = {
+							["Text"] = "Cannot give cash that is currently on hold! Deliver your passengers first.",
+							["Color"] = v_u_19,
+							["Stroke"] = {
+								["Color"] = v_u_20,
+								["Thickness"] = 1
+							}
+						}
+						v_u_18.add(v40)
+					else
+						local v41 = v_u_13.SendCash:InvokeServer({
+							["Value"] = v36,
+							["OtherPlayer"] = p_u_34,
+							["Password"] = v_u_16.code
+						})
+						if v41 == "Success" then
+							v_u_15.PlaySound("Success")
+							local v42 = {
+								["Text"] = "Success!",
+								["Color"] = v_u_21,
+								["Stroke"] = {
+									["Color"] = v_u_20,
+									["Thickness"] = 1
+								}
+							}
+							v_u_18.add(v42)
+						elseif v41 == "Cooldown" then
+							local v43 = {
+								["Text"] = "Cooldown effective, try again later! Note: this discourages cross trading.",
+								["Color"] = v_u_19,
+								["Stroke"] = {
+									["Color"] = v_u_20,
+									["Thickness"] = 1
+								}
+							}
+							v_u_18.add(v43)
+						elseif v41 == "Error" then
+							local v44 = {
+								["Text"] = "Error!",
+								["Color"] = v_u_19,
+								["Stroke"] = {
+									["Color"] = v_u_20,
+									["Thickness"] = 1
+								}
+							}
+							v_u_18.add(v44)
+						end
+						v_u_14.CloseFrame(v_u_23.Parent, false, 0, true, true)
+					end
+				else
+					local v45 = {
+						["Text"] = "Not enough cash!",
+						["Color"] = v_u_19,
+						["Stroke"] = {
+							["Color"] = v_u_20,
+							["Thickness"] = 1
+						}
+					}
+					v_u_18.add(v45)
+					return
+				end
+			end
+		else
+			local v46 = {
+				["Text"] = "Amount should be a number!",
+				["Color"] = v_u_19,
+				["Stroke"] = {
+					["Color"] = v_u_20,
+					["Thickness"] = 1
+				}
+			}
+			v_u_18.add(v46)
+			return
+		end
+	end
+	local v_u_48 = v_u_24.Size
+	local v_u_49 = v_u_26.Size
+	local v_u_50 = v_u_24.MouseEnter:Connect(function()
+		-- upvalues: (ref) v_u_15, (ref) v_u_24, (copy) v_u_48
+		v_u_15.PlaySound("Hover")
+		if v_u_24.Size == v_u_48 then
+			v_u_24.Size = UDim2.fromScale(v_u_48.X.Scale - v_u_48.X.Scale * 10 / 100, v_u_48.Y.Scale - v_u_48.Y.Scale * 10 / 100)
+		end
+		v_u_24.MouseLeave:Once(function()
+			-- upvalues: (ref) v_u_24, (ref) v_u_48
+			v_u_24.Size = v_u_48
+		end)
+	end)
+	local v_u_51 = v_u_26.MouseEnter:Connect(function()
+		-- upvalues: (ref) v_u_15, (ref) v_u_26, (copy) v_u_49
+		v_u_15.PlaySound("Hover")
+		if v_u_26.Size == v_u_49 then
+			v_u_26.Size = UDim2.fromScale(v_u_49.X.Scale - v_u_49.X.Scale * 10 / 100, v_u_49.Y.Scale - v_u_49.Y.Scale * 10 / 100)
+		end
+		v_u_26.MouseLeave:Once(function()
+			-- upvalues: (ref) v_u_26, (ref) v_u_49
+			v_u_26.Size = v_u_49
+		end)
+	end)
+	local v_u_52 = v_u_24.MouseButton1Click:Connect(function()
+		-- upvalues: (ref) v_u_15, (ref) v_u_33, (ref) v_u_14, (ref) v_u_23
+		v_u_15.PlaySound("ButtonClick")
+		if not v_u_33 then
+			v_u_33 = true
+			v_u_14.CloseFrame(v_u_23.Parent, false, 0, false, true)
+			task.wait(0.1)
+			v_u_33 = false
+		end
+	end)
+	v_u_26.MouseButton1Click:Connect(function()
+		-- upvalues: (ref) v_u_14, (ref) v_u_26, (ref) v_u_15, (ref) v_u_33, (copy) v_u_47
+		v_u_14.ClickButton(v_u_26, 15)
+		v_u_15.PlaySound("ButtonClick")
+		if not v_u_33 then
+			v_u_33 = true
+			v_u_47()
+			task.wait(0.1)
+			v_u_33 = false
+		end
+	end)
+	v_u_23.Parent:GetPropertyChangedSignal("Visible"):Once(function()
+		-- upvalues: (copy) v_u_52, (copy) v_u_50, (copy) v_u_51
+		v_u_52:Disconnect()
+		v_u_50:Disconnect()
+		v_u_51:Disconnect()
+	end)
+end
+local function v_u_69(p_u_54)
+	-- upvalues: (copy) v_u_30, (copy) v_u_32, (copy) v_u_14, (copy) v_u_28, (copy) v_u_23, (copy) v_u_10, (copy) v_u_15, (copy) v_u_18, (copy) v_u_21, (copy) v_u_20, (copy) v_u_13, (copy) v_u_16, (copy) v_u_19, (copy) v_u_29, (copy) v_u_31, (ref) v_u_33
+	v_u_30.Text = "Type Here"
+	v_u_32.Text = "Send Coin to " .. p_u_54.Name
+	v_u_14.OpenFrame(v_u_28.Parent, false, 0, true, false, false)
+	v_u_14.CloseFrame(v_u_23.Parent, false, 0, false, true)
+	local function v_u_63()
+		-- upvalues: (ref) v_u_30, (ref) v_u_10, (ref) v_u_15, (ref) v_u_18, (ref) v_u_21, (ref) v_u_20, (ref) v_u_13, (copy) p_u_54, (ref) v_u_16, (ref) v_u_14, (ref) v_u_28, (ref) v_u_19
+		local v55 = v_u_30.Text
+		if v55 == "" then
+			local v56 = {
+				["Text"] = "Error!",
+				["Color"] = v_u_19,
+				["Stroke"] = {
+					["Color"] = v_u_20,
+					["Thickness"] = 1
+				}
+			}
+			v_u_18.add(v56)
+			return
+		elseif tonumber(v55) then
+			v_u_30.Text = ""
+			if tonumber(v55) <= 300 then
+				if tonumber(v55) > 0 then
+					if tonumber(v55) <= v_u_10.Barya.Value then
+						if v_u_10.Barya.Value - v_u_10.OnHoldCash.Value > tonumber(v55) then
+							v_u_15.PlaySound("Success")
+							local v57 = {
+								["Text"] = "Success!",
+								["Color"] = v_u_21,
+								["Stroke"] = {
+									["Color"] = v_u_20,
+									["Thickness"] = 1
+								}
+							}
+							v_u_18.add(v57)
+							v_u_13.SendCoin:FireServer({
+								["Value"] = tonumber(v55),
+								["OtherPlayer"] = p_u_54,
+								["Password"] = v_u_16.code
+							})
+							v_u_14.CloseFrame(v_u_28.Parent, false, 0, true, true)
+						else
+							local v58 = {
+								["Text"] = "Cannot give coins that are currently on hold, deliver your passengers to their destinations first!",
+								["Color"] = v_u_19,
+								["Stroke"] = {
+									["Color"] = v_u_20,
+									["Thickness"] = 1
+								}
+							}
+							v_u_18.add(v58)
+						end
+					else
+						local v59 = {
+							["Text"] = "Not enough coin!",
+							["Color"] = v_u_19,
+							["Stroke"] = {
+								["Color"] = v_u_20,
+								["Thickness"] = 1
+							}
+						}
+						v_u_18.add(v59)
+						return
+					end
+				else
+					local v60 = {
+						["Text"] = "Amount should be above 0!",
+						["Color"] = v_u_19,
+						["Stroke"] = {
+							["Color"] = v_u_20,
+							["Thickness"] = 1
+						}
+					}
+					v_u_18.add(v60)
+					return
+				end
+			else
+				local v61 = {
+					["Text"] = "Text should be below 300!",
+					["Color"] = v_u_19,
+					["Stroke"] = {
+						["Color"] = v_u_20,
+						["Thickness"] = 1
+					}
+				}
+				v_u_18.add(v61)
+				return
+			end
+		else
+			local v62 = {
+				["Text"] = "Amount should be a number!",
+				["Color"] = v_u_19,
+				["Stroke"] = {
+					["Color"] = v_u_20,
+					["Thickness"] = 1
+				}
+			}
+			v_u_18.add(v62)
+			return
+		end
+	end
+	local v_u_64 = v_u_29.Size
+	local v_u_65 = v_u_31.Size
+	local v_u_66 = v_u_29.MouseEnter:Connect(function()
+		-- upvalues: (ref) v_u_15, (ref) v_u_29, (copy) v_u_64
+		v_u_15.PlaySound("Hover")
+		if v_u_29.Size == v_u_64 then
+			v_u_29.Size = UDim2.fromScale(v_u_64.X.Scale - v_u_64.X.Scale * 10 / 100, v_u_64.Y.Scale - v_u_64.Y.Scale * 10 / 100)
+		end
+		v_u_29.MouseLeave:Once(function()
+			-- upvalues: (ref) v_u_29, (ref) v_u_64
+			v_u_29.Size = v_u_64
+		end)
+	end)
+	local v_u_67 = v_u_31.MouseEnter:Connect(function()
+		-- upvalues: (ref) v_u_15, (ref) v_u_31, (copy) v_u_65
+		v_u_15.PlaySound("Hover")
+		if v_u_31.Size == v_u_65 then
+			v_u_31.Size = UDim2.fromScale(v_u_65.X.Scale - v_u_65.X.Scale * 10 / 100, v_u_65.Y.Scale - v_u_65.Y.Scale * 10 / 100)
+		end
+		v_u_31.MouseLeave:Once(function()
+			-- upvalues: (ref) v_u_31, (ref) v_u_65
+			v_u_31.Size = v_u_65
+		end)
+	end)
+	local v_u_68 = v_u_29.MouseButton1Click:Connect(function()
+		-- upvalues: (ref) v_u_15, (ref) v_u_33, (ref) v_u_14, (ref) v_u_28
+		v_u_15.PlaySound("ButtonClick")
+		if not v_u_33 then
+			v_u_33 = true
+			v_u_14.CloseFrame(v_u_28.Parent, false, 0, false, true)
+			task.wait(0.1)
+			v_u_33 = false
+		end
+	end)
+	v_u_31.MouseButton1Click:Connect(function()
+		-- upvalues: (ref) v_u_14, (ref) v_u_31, (ref) v_u_15, (ref) v_u_33, (copy) v_u_63
+		v_u_14.ClickButton(v_u_31, 15)
+		v_u_15.PlaySound("ButtonClick")
+		if not v_u_33 then
+			v_u_33 = true
+			v_u_63()
+			task.wait(0.1)
+			v_u_33 = false
+		end
+	end)
+	v_u_28.Parent:GetPropertyChangedSignal("Visible"):Once(function()
+		-- upvalues: (copy) v_u_68, (copy) v_u_66, (copy) v_u_67
+		v_u_68:Disconnect()
+		v_u_66:Disconnect()
+		v_u_67:Disconnect()
+	end)
+end
+function v_u_1.Intialize(p_u_70)
+	-- upvalues: (copy) v_u_9, (copy) v_u_22, (copy) v_u_2, (copy) v_u_15, (copy) v_u_4, (copy) v_u_14, (ref) v_u_33, (copy) v_u_53, (copy) v_u_69, (copy) v_u_5, (copy) v_u_13, (copy) v_u_16, (copy) v_u_18, (copy) v_u_21, (copy) v_u_20, (copy) v_u_8, (copy) v_u_19, (copy) v_u_12
+	if v_u_9.GiveCurrencyGuis:FindFirstChild(p_u_70.Name) then
+		v_u_9.GiveCurrencyGuis:FindFirstChild(p_u_70.Name):Destroy()
+	end
+	local v_u_71 = v_u_22:Clone()
+	v_u_71.Parent = v_u_9.GiveCurrencyGuis
+	v_u_71.Name = p_u_70.Name
+	v_u_71.Adornee = p_u_70
+	local v_u_72 = v_u_71.Interact
+	local v_u_73 = v_u_71.List
+	local v_u_74 = v_u_71.Back
+	local v_u_75 = v_u_72.Size
+	local v_u_76 = v_u_2:FindFirstChild(p_u_70.Name).OtherValues
+	local v_u_77 = v_u_72.MouseEnter:Connect(function()
+		-- upvalues: (ref) v_u_15, (copy) v_u_72, (copy) v_u_75
+		v_u_15.PlaySound("Hover")
+		if v_u_72.Size == v_u_75 then
+			v_u_72.Size = UDim2.fromScale(v_u_75.X.Scale - v_u_75.X.Scale * 10 / 100, v_u_75.Y.Scale - v_u_75.Y.Scale * 10 / 100)
+		end
+		v_u_72.MouseLeave:Once(function()
+			-- upvalues: (ref) v_u_72, (ref) v_u_75
+			v_u_72.Size = v_u_75
+		end)
+	end)
+	local function v_u_91()
+		-- upvalues: (copy) v_u_72, (copy) v_u_73, (ref) v_u_4, (copy) v_u_74, (ref) v_u_14, (ref) v_u_15, (ref) v_u_33, (ref) v_u_53, (ref) v_u_2, (copy) p_u_70, (ref) v_u_69, (ref) v_u_5, (ref) v_u_13, (ref) v_u_16, (ref) v_u_18, (ref) v_u_21, (ref) v_u_20, (ref) v_u_8, (ref) v_u_19
+		v_u_72.Visible = false
+		v_u_73.Visible = true
+		v_u_73.Size = UDim2.fromScale(0, 0)
+		v_u_4:Create(v_u_73, TweenInfo.new(0.25, Enum.EasingStyle.Sine), {
+			["Size"] = UDim2.fromScale(0.5, 0.5)
+		}):Play()
+		task.wait(0.25)
+		v_u_74.Visible = true
+		for _, v_u_78 in v_u_73:GetChildren() do
+			if v_u_78:IsA("Frame") then
+				local v_u_85 = v_u_78.Button.MouseButton1Click:Connect(function()
+					-- upvalues: (ref) v_u_14, (copy) v_u_78, (ref) v_u_15, (ref) v_u_33, (ref) v_u_53, (ref) v_u_2, (ref) p_u_70, (ref) v_u_69, (ref) v_u_5, (ref) v_u_13, (ref) v_u_16, (ref) v_u_18, (ref) v_u_21, (ref) v_u_20, (ref) v_u_8, (ref) v_u_19
+					v_u_14.ClickButton(v_u_78)
+					v_u_15.PlaySound("ButtonClick")
+					if not v_u_33 then
+						v_u_33 = true
+						if v_u_78.Name == "Cash" then
+							v_u_53(v_u_2:FindFirstChild(p_u_70.Name))
+						elseif v_u_78.Name == "Barya" then
+							v_u_69(v_u_2:FindFirstChild(p_u_70.Name))
+						elseif v_u_78.Name == "Conductor" then
+							local v79 = workspace.Jeepnies:FindFirstChild(v_u_5.Name)
+							local v80 = v_u_13.CheckIfConductor:InvokeServer(v_u_2:FindFirstChild(p_u_70.Name))
+							if v79 then
+								if v80 then
+									local v81 = v79.PassengerValues
+									v_u_13.ChangeConductor:FireServer({
+										["PassengerValues"] = v81,
+										["ConductorName"] = p_u_70.Name,
+										["Password"] = v_u_16.code
+									})
+									local v82 = {
+										["Text"] = "Success, tell the player to sit on the conductor\'s seat!",
+										["Color"] = v_u_21,
+										["Stroke"] = {
+											["Color"] = v_u_20,
+											["Thickness"] = 1
+										}
+									}
+									v_u_18.add(v82)
+									v_u_8.Frames.JeepneySettings.Frame.List.Frame.ConductorName.NameTextBox.Text = p_u_70.Name
+								else
+									local v83 = {
+										["Text"] = "Error!",
+										["Color"] = v_u_19,
+										["Stroke"] = {
+											["Color"] = v_u_20,
+											["Thickness"] = 1
+										}
+									}
+									v_u_18.add(v83)
+								end
+							else
+								local v84 = {
+									["Text"] = "You do not have any spawned jeepnies!",
+									["Color"] = v_u_19,
+									["Stroke"] = {
+										["Color"] = v_u_20,
+										["Thickness"] = 1
+									}
+								}
+								v_u_18.add(v84)
+							end
+						end
+						task.wait(0.1)
+						v_u_33 = false
+					end
+				end)
+				local v_u_86 = v_u_78.Size
+				local v_u_87 = v_u_78.MouseEnter:Connect(function()
+					-- upvalues: (ref) v_u_15, (copy) v_u_78, (copy) v_u_86
+					v_u_15.PlaySound("Hover")
+					if v_u_78.Size == v_u_86 then
+						v_u_78.Size = UDim2.fromScale(v_u_86.X.Scale - v_u_86.X.Scale * 10 / 100, v_u_86.Y.Scale - v_u_86.Y.Scale * 10 / 100)
+					end
+					v_u_78.MouseLeave:Once(function()
+						-- upvalues: (ref) v_u_78, (ref) v_u_86
+						v_u_78.Size = v_u_86
+					end)
+				end)
+				v_u_72:GetPropertyChangedSignal("Visible"):Once(function()
+					-- upvalues: (copy) v_u_85, (copy) v_u_87, (copy) v_u_78, (copy) v_u_86
+					v_u_85:Disconnect()
+					v_u_87:Disconnect()
+					v_u_78.Size = v_u_86
+				end)
+			end
+		end
+		local v_u_88 = v_u_74.Size
+		local v_u_89 = v_u_74.MouseEnter:Connect(function()
+			-- upvalues: (ref) v_u_15, (ref) v_u_74, (copy) v_u_88
+			v_u_15.PlaySound("Hover")
+			if v_u_74.Size == v_u_88 then
+				v_u_74.Size = UDim2.fromScale(v_u_88.X.Scale - v_u_88.X.Scale * 10 / 100, v_u_88.Y.Scale - v_u_88.Y.Scale * 10 / 100)
+			end
+			v_u_74.MouseLeave:Once(function()
+				-- upvalues: (ref) v_u_74, (ref) v_u_88
+				v_u_74.Size = v_u_88
+			end)
+		end)
+		local v_u_90 = v_u_74.MouseButton1Click:Connect(function()
+			-- upvalues: (ref) v_u_15, (ref) v_u_33, (ref) v_u_74, (ref) v_u_4, (ref) v_u_73, (ref) v_u_72
+			v_u_15.PlaySound("ButtonClick")
+			if not v_u_33 then
+				v_u_33 = true
+				v_u_74.Visible = false
+				v_u_4:Create(v_u_73, TweenInfo.new(0.25, Enum.EasingStyle.Sine), {
+					["Size"] = UDim2.fromScale(0, 0)
+				}):Play()
+				task.wait(0.1)
+				v_u_72.Visible = true
+				v_u_73.Visible = false
+				v_u_33 = false
+			end
+		end)
+		v_u_72:GetPropertyChangedSignal("Visible"):Once(function()
+			-- upvalues: (copy) v_u_90, (copy) v_u_89
+			v_u_90:Disconnect()
+			v_u_89:Disconnect()
+		end)
+	end
+	local v_u_92 = v_u_72.Button.MouseButton1Click:Connect(function()
+		-- upvalues: (ref) v_u_14, (copy) v_u_72, (ref) v_u_15, (ref) v_u_33, (copy) v_u_91
+		v_u_14.ClickButton(v_u_72, 15)
+		v_u_15.PlaySound("ButtonClick")
+		if not v_u_33 then
+			v_u_33 = true
+			task.wait(0.15)
+			v_u_91()
+			v_u_33 = false
+		end
+	end)
+	v_u_71.Destroying:Once(function()
+		-- upvalues: (copy) v_u_92, (copy) v_u_77
+		v_u_92:Disconnect()
+		v_u_77:Disconnect()
+	end)
+	coroutine.wrap(function()
+		-- upvalues: (copy) v_u_71, (ref) v_u_9, (ref) v_u_5, (ref) v_u_12, (copy) v_u_76, (copy) p_u_70, (copy) v_u_72, (copy) v_u_73, (copy) v_u_74
+		while task.wait(1) and v_u_71:IsDescendantOf(v_u_9.GiveCurrencyGuis) do
+			local v93 = workspace:FindFirstChild(v_u_5.Name)
+			if v_u_12.IsDrivingAJeepney.Value and v_u_76.IsSeatingInAJeepney.Value or (v_u_76.IsDrivingAJeepney.Value and v_u_12.IsSeatingInAJeepney.Value or v_u_12.IsDrivingAJeepney.Value and v_u_76.IsDrivingAJeepney.Value) then
+				v_u_71.MaxDistance = 30
+				if v93 and (v93:FindFirstChild("HumanoidRootPart") and (p_u_70:FindFirstChild("HumanoidRootPart") and (v93.HumanoidRootPart.Position - p_u_70.HumanoidRootPart.Position).Magnitude > 30)) then
+					v_u_72.Visible = true
+					v_u_73.Visible = false
+					v_u_74.Visible = false
+				end
+			else
+				v_u_71.MaxDistance = 5
+				if v93 and (v93:FindFirstChild("HumanoidRootPart") and (p_u_70:FindFirstChild("HumanoidRootPart") and (v93.HumanoidRootPart.Position - p_u_70.HumanoidRootPart.Position).Magnitude > 5)) then
+					v_u_72.Visible = true
+					v_u_73.Visible = false
+					v_u_74.Visible = false
+				end
+			end
+		end
+	end)()
+end
+workspace.ChildRemoved:Connect(function(p94)
+	-- upvalues: (copy) v_u_2, (copy) v_u_5, (copy) v_u_9
+	if p94:IsA("Model") and (v_u_2:FindFirstChild(p94.Name) and p94.Name ~= v_u_5.Name) then
+		v_u_9.GiveCurrencyGuis:FindFirstChild(p94.Name):Destroy()
+	end
+end)
+workspace.ChildAdded:Connect(function(p95)
+	-- upvalues: (copy) v_u_2, (copy) v_u_9, (copy) v_u_5, (copy) v_u_1
+	if p95:IsA("Model") and (v_u_2:FindFirstChild(p95.Name) and (not v_u_9.GiveCurrencyGuis:FindFirstChild(p95.Name) and p95.Name ~= v_u_5.Name)) then
+		v_u_1.Intialize(p95)
+	end
+end)
+local _, _ = pcall(function()
+	-- upvalues: (copy) v_u_2, (copy) v_u_9, (copy) v_u_5, (copy) v_u_1
+	coroutine.wrap(function()
+		-- upvalues: (ref) v_u_2, (ref) v_u_9, (ref) v_u_5, (ref) v_u_1
+		while task.wait(5) do
+			for _, v96 in workspace:GetChildren() do
+				if v_u_2:FindFirstChild(v96.Name) and (not v_u_9.GiveCurrencyGuis:FindFirstChild(v96.Name) and v96.Name ~= v_u_5.Name) then
+					v_u_1.Intialize(v96)
+				end
+			end
+		end
+	end)()
+	coroutine.wrap(function()
+		-- upvalues: (ref) v_u_9, (ref) v_u_1
+		while task.wait(5) do
+			for _, v97 in v_u_9.GiveCurrencyGuis:GetChildren() do
+				if not v97.Adornee and workspace:FindFirstChild(v97.Name) then
+					v_u_1.Intialize(workspace:FindFirstChild(v97.Name))
+				end
+			end
+		end
+	end)()
+end)
+return v_u_1
